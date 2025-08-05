@@ -1,0 +1,391 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Font Families */
+  --font-system:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, ui-sans-serif,
+    system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+  /* Primary Brand Colors */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  /* Secondary Colors */
+  --color-secondary-50: #f0f9ff;
+  --color-secondary-100: #e0f2fe;
+  --color-secondary-200: #bae6fd;
+  --color-secondary-300: #7dd3fc;
+  --color-secondary-400: #38bdf8;
+  --color-secondary-500: #0ea5e9;
+  --color-secondary-600: #0284c7;
+  --color-secondary-700: #0369a1;
+  --color-secondary-800: #075985;
+  --color-secondary-900: #0c4a6e;
+
+  /* Success Colors */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+
+  /* Danger Colors */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+
+  /* Warning Colors */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+
+  /* Custom Box Shadows */
+  --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --shadow-soft-dark: 0 2px 10px rgba(0, 0, 0, 0.3);
+  --shadow-elevation: 0 4px 20px rgba(0, 0, 0, 0.15);
+  --shadow-elevation-dark: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* -------------------------------------------------- */
+/* 0. Semantic Color Utilities - Theme System         */
+/* -------------------------------------------------- */
+
+/* Text Colors - Semantic */
+@utility text-primary {
+  @apply text-neutral-900 dark:text-neutral-50;
+}
+@utility text-secondary {
+  @apply text-neutral-600 dark:text-neutral-400;
+}
+@utility text-muted {
+  @apply text-neutral-500 dark:text-neutral-500;
+}
+@utility text-brand {
+  @apply text-primary-600 dark:text-primary-400;
+}
+@utility text-brand-emphasis {
+  @apply text-primary-700 dark:text-primary-300;
+}
+
+/* Status Text Colors */
+@utility text-status-success {
+  @apply text-success-700 dark:text-success-400;
+}
+@utility text-status-danger {
+  @apply text-danger-700 dark:text-danger-400;
+}
+@utility text-status-warning {
+  @apply text-warning-700 dark:text-warning-400;
+}
+@utility text-status-info {
+  @apply text-primary-700 dark:text-primary-400;
+}
+
+/* Background Colors - Semantic */
+@utility bg-page {
+  @apply bg-neutral-50 dark:bg-neutral-900;
+}
+@utility bg-surface {
+  @apply bg-white dark:bg-neutral-800;
+}
+@utility bg-surface-elevated {
+  @apply bg-white dark:bg-neutral-700;
+}
+@utility bg-overlay {
+  @apply bg-black/50 dark:bg-black/70;
+}
+
+/* Status Backgrounds */
+@utility bg-status-success {
+  @apply bg-success-100 dark:bg-success-900/30;
+}
+@utility bg-status-danger {
+  @apply bg-danger-100 dark:bg-danger-900/30;
+}
+@utility bg-status-warning {
+  @apply bg-warning-100 dark:bg-warning-900/30;
+}
+@utility bg-status-info {
+  @apply bg-primary-100 dark:bg-primary-900/30;
+}
+
+/* Interactive Backgrounds */
+@utility bg-interactive {
+  @apply bg-neutral-50 dark:bg-neutral-700;
+}
+@utility bg-interactive-hover {
+  @apply hover:bg-neutral-100 dark:hover:bg-neutral-600;
+}
+@utility bg-interactive-active {
+  @apply bg-neutral-200 dark:bg-neutral-600;
+}
+
+/* Border Colors - Semantic */
+@utility border-default {
+  @apply border-neutral-200 dark:border-neutral-700;
+}
+@utility border-subtle {
+  @apply border-neutral-100 dark:border-neutral-800;
+}
+@utility border-accent {
+  @apply border-primary-500 dark:border-primary-400;
+}
+@utility border-emphasis {
+  @apply border-primary-600 dark:border-primary-300;
+}
+
+/* Status Borders */
+@utility border-status-success {
+  @apply border-success-600;
+}
+@utility border-status-danger {
+  @apply border-danger-600;
+}
+@utility border-status-warning {
+  @apply border-warning-600;
+}
+@utility border-status-info {
+  @apply border-primary-600;
+}
+
+/* Focus States */
+@utility focus-accent {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
+}
+@utility focus-danger {
+  @apply focus:outline-none focus:ring-2 focus:ring-danger-500;
+}
+
+/* Tab States */
+@utility tab-active {
+  @apply text-brand font-semibold border-b-3 border-accent;
+}
+@utility tab-inactive {
+  @apply text-secondary bg-interactive-hover border-b-3 border-transparent hover:border-default;
+}
+
+/* Selection States */
+@utility selected-accent {
+  @apply border-accent bg-primary-600;
+}
+@utility unselected-neutral {
+  @apply border-default bg-surface;
+}
+
+/* -------------------------------------------------- */
+/* 1. Semantic Animation Utilities - Motion System    */
+/* -------------------------------------------------- */
+
+/* Hover Effects */
+@utility hover-lift {
+  @apply hover:-translate-y-1 hover:shadow-elevation hover:dark:shadow-elevation-dark;
+}
+@utility hover-subtle {
+  @apply hover:bg-interactive-hover;
+}
+@utility hover-scale {
+  @apply hover:scale-105;
+}
+
+/* Transition Speeds */
+@utility transition-fast {
+  transition: all 0.15s ease;
+}
+@utility transition-smooth {
+  transition: all 0.2s ease;
+}
+@utility transition-slow {
+  transition: all 0.3s ease;
+}
+
+/* Slide Animations */
+@utility slide-in-right {
+  @apply transform transition-transform duration-500 ease-out translate-x-full;
+}
+@utility slide-in-right-visible {
+  @apply translate-x-0;
+}
+@utility slide-in-left {
+  @apply transform transition-transform duration-300 ease-out -translate-x-full;
+}
+@utility slide-in-left-visible {
+  @apply translate-x-0;
+}
+@utility slide-in-up {
+  @apply transform transition-transform duration-300 ease-out translate-y-full;
+}
+@utility slide-in-up-visible {
+  @apply translate-y-0;
+}
+
+/* Fade Animations */
+@utility fade-in {
+  @apply transition-opacity duration-300 ease-out opacity-0;
+}
+@utility fade-in-visible {
+  @apply opacity-100;
+}
+@utility fade-out {
+  @apply transition-opacity duration-200 ease-in opacity-100;
+}
+@utility fade-out-hidden {
+  @apply opacity-0;
+}
+
+/* Interactive States */
+@utility interactive-element {
+  @apply transition-smooth cursor-pointer focus-accent;
+}
+@utility card-interactive {
+  @apply interactive-element hover-lift;
+}
+
+/* Focus Animations */
+@utility focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200;
+}
+@utility focus-ring-danger {
+  @apply focus:outline-none focus:ring-2 focus:ring-danger-500 focus:ring-offset-2 transition-all duration-200;
+}
+
+/* -------------------------------------------------- */
+/* 2. Base layer: resets, defaults, theming, scrollbar */
+/* -------------------------------------------------- */
+@layer base {
+  html {
+    font-family: var(--font-system);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  * {
+    @apply transition duration-200 ease-in-out;
+  }
+  .transition-disabled * {
+    @apply transition-none;
+  }
+
+  body {
+    @apply bg-page text-primary min-h-screen flex flex-col;
+  }
+
+  /* touch feedback */
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+
+  select {
+    @apply appearance-none bg-surface border border-default cursor-pointer focus-accent px-3 py-2 rounded-lg w-full;
+  }
+  input {
+    @apply bg-surface border border-default focus-accent px-3 py-2 rounded-lg w-full;
+  }
+
+  /* Scrollbars */
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    @apply bg-neutral-300 dark:bg-neutral-700 rounded-lg;
+  }
+}
+
+/* -------------------------------------------------- */
+/* 3. Components layer: reusable patterns             */
+/* -------------------------------------------------- */
+
+@utility btn {
+  @apply inline-flex items-center justify-center font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer px-4 py-2 disabled:opacity-50 disabled:bg-neutral-500 disabled:hover:bg-neutral-600 text-white;
+}
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply btn bg-primary-500 hover:bg-primary-600 focus:ring-primary-300;
+  }
+  .btn-secondary {
+    @apply btn bg-secondary-500 hover:bg-secondary-600 focus:ring-secondary-300;
+  }
+  .btn-success {
+    @apply btn bg-success-500 hover:bg-success-600 focus:ring-success-300;
+  }
+  .btn-danger {
+    @apply btn bg-danger-500 hover:bg-danger-600 focus:ring-danger-300;
+  }
+  .btn-warning {
+    @apply btn bg-warning-500 hover:bg-warning-600 focus:ring-warning-300;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-surface border border-default rounded-xl shadow-soft dark:shadow-soft-dark p-4 border-1 w-full;
+  }
+
+  /* Custom styled select with arrow */
+  .icon-button {
+    @apply inline-flex items-center justify-center w-9 h-9 text-sm rounded-lg bg-surface bg-interactive-hover border border-default focus-accent;
+  }
+
+  .voucher-code {
+    @apply font-bold text-brand font-mono tracking-wider;
+  }
+}
+
+/* -------------------------------------------------- */
+/* 4. Utilities layer: small helpers                  */
+/* -------------------------------------------------- */
+@layer utilities {
+  /* Flex center shortcuts */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  /* Safe area padding for iOS */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

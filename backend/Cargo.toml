@@ -1,0 +1,25 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.4"
+chrono = { version = "0.4.41" }
+chrono-tz = "0.10.4"
+reqwest = { version = "0.12.22", features = ["json", "rustls-tls"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.141"
+tokio = { version = "1.47.0", features = ["full"] }
+tower = "0.5.2" # Remove??
+tower-http = { version = "0.6.6", features = ["cors"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
+[profile.release]
+opt-level = "z"
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = "symbols"
+

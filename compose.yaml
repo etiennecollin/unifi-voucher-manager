@@ -1,0 +1,20 @@
+---
+services:
+  unifi-voucher-manager:
+    image: etiennecollin/unifi-voucher-manager
+    # To build the image yourself
+    # build:
+    #   context: "./"
+    #   target: "runtime"
+    #   dockerfile: "./Dockerfile"
+    container_name: "unifi-voucher-manager"
+    restart: "unless-stopped"
+    ports:
+      - "3000:3000"
+    # To put the environment variables in a `.env` file, uncomment the env_file
+    # section and comment the environment section.
+    # env_file:
+    #   - ".env"
+    environment:
+      UNIFI_CONTROLLER_URL: "URL to your Unifi controller with protocol. Example: 'https://unifi.example.com:8443' or 'http://192.168.0.1'"
+      UNIFI_API_KEY: "API Key for your Unifi controller"

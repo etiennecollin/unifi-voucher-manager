@@ -1,0 +1,8 @@
+README.md
+.env
+compose.yaml
+assets
+
+Dockerfile
+.git
+.gitignore
