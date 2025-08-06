@@ -1,6 +1,6 @@
 # WiFi Voucher Manager
 
-[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/etiennecollin/unifi-voucher-manager?sort=semver&label=Version&logo=docker&color=blue)]
+[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/etiennecollin/unifi-voucher-manager?sort=semver&label=Version&logo=docker&color=blue)](https://hub.docker.com/r/etiennecollin/unifi-voucher-manager)
 
 A modern, touch-friendly web application for managing WiFi vouchers on UniFi controllers.
 Perfect for businesses, cafes, hotels, and home networks that need to provide guest WiFi access.
