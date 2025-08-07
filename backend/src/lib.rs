@@ -25,6 +25,9 @@ pub struct Environment {
 
 impl Environment {
     pub fn try_new() -> Result<Self, String> {
+        #[cfg(feature = "dotenv")]
+        dotenvy::dotenv().map_err(|e| format!("Failed to load .env file: {e}"))?;
+
         let unifi_controller_url: String =
             env::var("UNIFI_CONTROLLER_URL").map_err(|e| format!("UNIFI_CONTROLLER_URL: {e}"))?;
         let unifi_api_key: String =

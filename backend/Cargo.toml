@@ -7,6 +7,7 @@ edition = "2024"
 axum = "0.8.4"
 chrono = { version = "0.4.41" }
 chrono-tz = "0.10.4"
+dotenvy = { version = "0.15.7", optional = true }
 reqwest = { version = "0.12.22", features = ["json", "rustls-tls"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.141"
@@ -22,4 +23,7 @@ codegen-units = 1
 lto = "fat"
 panic = "abort"
 strip = "symbols"
+
+[features]
+dotenv = ["dep:dotenvy"]
 

@@ -82,50 +82,50 @@ This application is built with a clear separation of concerns:
 ### 🐳 Using Docker Compose (Recommended)
 
 1. **Create the configuration files**
-
-```bash
-# Download the compose file
-curl -o compose.yaml https://raw.githubusercontent.com/etiennecollin/unifi-voucher-manager/main/compose.yaml
-```
-
+   ```bash
+   # Download the compose file
+   curl -o compose.yaml https://raw.githubusercontent.com/etiennecollin/unifi-voucher-manager/main/compose.yaml
+   ```
 2. **Configure your environment**
-
-Set the required environment variables (see [Environment Variables](#environment-variables)) in the `compose.yaml` file.
-
+   - Set the required environment variables (see [Environment Variables](#environment-variables)) in the `compose.yaml` file.
 3. **Start the application**
-
-```bash
-docker compose up -d --force-recreate
-```
-
+   ```bash
+   docker compose up -d --force-recreate
+   ```
 4. **Access the interface**
-
-Open your browser to `http://localhost:3000`.
+   - Open your browser to `http://localhost:3000`.
 
 ### ⚙️ Without Docker
 
 1. **Install the dependencies**
+   - `rust >= 1.88.0`
+   - `nodejs >= 24.3.0`
+   - `npm >= 11.4.2`
+2. **Clone the repository**
+   ```bash
+   git clone https://github.com/etiennecollin/unifi-voucher-manager
+   ```
+3. **Configure your environment**
+   - In your shell, set the required environment variables (see [Environment Variables](#environment-variables))
+     or set them in a `.env` file at the root of the repository and use the `dotenv` feature of the rust backend.
+4. **Start the frontend and backend**
 
-- `rust >= 1.88.0`
-- `nodejs >= 24.3.0`
-- `npm >= 11.4.2`
+   ```bash
+   # Backend (without using a .env file)
+   cd backend && cargo run --release
 
-2. **Configure your environment**
+   # Backend (using a .env file)
+   cd backend && cargo run --release --features dotenv
 
-In your shell, set the required environment variables (see [Environment Variables](#environment-variables))
+   # Frontend (development)
+   cd frontend && npm install && npm run dev
 
-3. **Start the frontend and backend**
+   # Frontend (release)
+   cd frontend && npm ci && npm run build && npm run start
+   ```
 
-```bash
-# Backend
-cd backend && cargo run -r
-
-# Frontend (development)
-cd frontend && npm install && npm run dev
-
-# Frontend (release)
-cd frontend && npm ci && npm run build && npm run start
-```
+5. **Access the interface**
+   - Open your browser to `http://localhost:3000`.
 
 ## ⚙️ Configuration
 
