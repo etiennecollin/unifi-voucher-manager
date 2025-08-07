@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { notify } from "@/utils/notifications";
 
 export default function ThemeSwitcher() {
   type themeType = "system" | "light" | "dark";
@@ -23,7 +22,6 @@ export default function ThemeSwitcher() {
       // Only disable transitions on Safari
       if (isSafari) {
         html.classList.add("transition-disabled");
-        notify("Theme changed, reloading for Safari compatibility", "info");
       }
 
       const isDark = theme === "dark" || (theme === "system" && mql.matches);
