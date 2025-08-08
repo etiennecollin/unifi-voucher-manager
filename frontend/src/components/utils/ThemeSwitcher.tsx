@@ -28,12 +28,12 @@ export default function ThemeSwitcher() {
       html.classList.toggle("dark", isDark);
       localStorage.setItem("theme", theme);
 
-      // Re-enable transitions after a brief delay (Safari only)
+      // Re-enable transitions after a brief delay on Safari
       if (isSafari) {
         requestAnimationFrame(() => {
           setTimeout(() => {
             html.classList.remove("transition-disabled");
-          }, 50);
+          }, 150);
         });
       }
     };
