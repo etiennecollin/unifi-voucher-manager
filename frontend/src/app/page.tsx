@@ -4,7 +4,7 @@ import Tabs from "@/components/tabs/Tabs";
 
 export default function Home() {
   return (
-    <div className="h-screen flex flex-col bg-page">
+    <div className="min-h-screen min-h-dvh flex flex-col">
       <NotificationContainer />
       <Header />
       <Tabs />
