@@ -1,6 +1,6 @@
 {
   "name": "unifi-voucher-manager",
-  "version": "0.1.0",
+  "version": "0.0.0-git",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
