@@ -1,7 +1,7 @@
 ---
 services:
   unifi-voucher-manager:
-    image: etiennecollin/unifi-voucher-manager
+    image: "etiennecollin/unifi-voucher-manager:latest"
     # To build the image yourself
     # build:
     #   context: "./"

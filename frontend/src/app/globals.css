@@ -285,14 +285,6 @@
 /* 2. Base layer: resets, defaults, theming, scrollbar */
 /* -------------------------------------------------- */
 @layer base {
-  html {
-    font-family: var(--font-system);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
-  }
-
   * {
     @apply transition duration-200 ease-in-out;
   }
@@ -300,8 +292,35 @@
     @apply transition-none;
   }
 
+  html {
+    font-family: var(--font-system);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+
+    /* Make non-scrollable */
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    touch-action: none;
+
+    @apply bg-page;
+  }
+
   body {
-    @apply bg-page text-primary min-h-screen flex flex-col;
+    /* Make sure to respect iOS safe areas */
+    height: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Add support for safe areas */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+      env(safe-area-inset-bottom) env(safe-area-inset-left);
+
+    @apply bg-page text-primary;
   }
 
   /* touch feedback */
@@ -379,13 +398,5 @@
   /* Flex center shortcuts */
   .flex-center {
     @apply flex items-center justify-center;
-  }
-
-  /* Safe area padding for iOS */
-  .safe-top {
-    padding-top: env(safe-area-inset-top);
-  }
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
   }
 }
