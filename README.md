@@ -1,6 +1,7 @@
 # WiFi Voucher Manager
 
-[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/etiennecollin/unifi-voucher-manager?sort=semver&label=Version&logo=docker&color=blue)](https://hub.docker.com/r/etiennecollin/unifi-voucher-manager)
+[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/etiennecollin/unifi-voucher-manager?sort=semver&label=Version&logo=docker&color=blue) ![Docker Pulls](https://img.shields.io/docker/pulls/etiennecollin/unifi-voucher-manager?label=Pulls&logo=docker&color=blue)](https://hub.docker.com/r/etiennecollin/unifi-voucher-manager)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/etiennecollin/unifi-voucher-manager/release_docker.yaml?label=Docker%20Build&logo=github) ![GitHub License](https://img.shields.io/github/license/etiennecollin/unifi-voucher-manager?label=License&logo=github&color=red)](https://github.com/etiennecollin/unifi-voucher-manager)
 
 A modern, touch-friendly web application for managing WiFi vouchers on UniFi controllers.
 Perfect for businesses, cafes, hotels, and home networks that need to provide guest WiFi access.
@@ -13,20 +14,14 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
   - [🎫 Voucher Management](#-voucher-management)
   - [🎨 Modern Interface](#-modern-interface)
   - [🔧 Technical Features](#-technical-features)
-    - [🏗 Architecture](#-architecture)
 - [🚀 Quick Start](#-quick-start)
-  - [🐳 Using Docker Compose (Recommended)](#-using-docker-compose-recommended)
-  - [⚙️ Without Docker](#-without-docker)
+  - [Using Docker Compose (Recommended)](#using-docker-compose-recommended)
+  - [Without Docker](#without-docker)
 - [⚙️ Configuration](#-configuration)
   - [Environment Variables](#environment-variables)
   - [Getting UniFi API Credentials](#getting-unifi-api-credentials)
-- [🤝 Contributing](#-contributing)
-  - [Development Guidelines](#development-guidelines)
-  - [Code Style](#code-style)
 - [🐛 Troubleshooting](#-troubleshooting)
   - [Common Issues](#common-issues)
-    - [Vouchers not appearing or connection issue to UniFi controller](#vouchers-not-appearing-or-connection-issue-to-unifi-controller)
-    - [Application won't start](#application-wont-start)
   - [Getting Help](#getting-help)
 
 <!-- vim-markdown-toc -->
@@ -59,27 +54,11 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 
 - **Docker Ready** - Easy deployment with Docker Compose and included healthcheck
 - **UniFi Integration** - Direct API connection to UniFi controllers
-
-#### 🏗 Architecture
-
-This application is built with a clear separation of concerns:
-
-1. **Frontend**: A Next.js 14 application (TypeScript + Tailwind CSS) that provides a responsive, touch-friendly UI.
-2. **Backend**: A Rust service powered by [Axum](https://github.com/tokio-rs/axum) that exposes a JSON API.
-3. **UniFi Controller**: The Axum backend securely communicates with your UniFi controller’s API, isolating API keys from the user-facing frontend.
-
-```text
-                                    {                          DOCKER                         }
-[User Browser] <––– HTTP/HTTPS –––> [Next.js Frontend] <––– HTTP/HTTPS –––> [Axum Rust Backend] <––– HTTPS –––> [UniFi Controller]
-```
-
-- The frontend only knows about the backend API endpoint.
-- All UniFi credentials and site IDs are stored on the backend.
-- This isolation limits the scope of user actions and protects sensitive API keys.
+- **Secure Architecture** - Next.js (TypeScript + Tailwind CSS) frontend with an Axum-based Rust backend that handles all UniFi Controller communication, keeping credentials isolated from the user-facing UI
 
 ## 🚀 Quick Start
 
-### 🐳 Using Docker Compose (Recommended)
+### Using Docker Compose (Recommended)
 
 1. **Create the configuration files**
    ```bash
@@ -95,7 +74,7 @@ This application is built with a clear separation of concerns:
 4. **Access the interface**
    - Open your browser to `http://localhost:3000`.
 
-### ⚙️ Without Docker
+### Without Docker
 
 1. **Install the dependencies**
    - `rust >= 1.88.0`
@@ -151,44 +130,20 @@ This application is built with a clear separation of concerns:
 3. **Create a new API key** by giving it a name and an expiration.
 4. **Find your Site ID** in the controller URL or on [unifi.ui.com](https://unifi.ui.com)
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-### Development Guidelines
-
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Make your changes** with proper TypeScript types
-4. **Update documentation** as needed
-5. **Commit changes**: `git commit -m 'feat: Add amazing feature'`
-6. **Push to branch**: `git push origin feature/amazing-feature`
-7. **Open a Pull Request**
-
-### Code Style
-
-- Use TypeScript for all new code
-- Follow the existing Tailwind CSS semantic utility patterns
-- Ensure components are touch-friendly and responsive
-- Add proper error handling and user feedback
-
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-#### Vouchers not appearing or connection issue to UniFi controller
-
-- Verify `UNIFI_CONTROLLER_URL` is correct and accessible
-- Verify `UNIFI_SITE_ID` matches your controller's site
-- Check if UniFi controller is running and reachable
-- Ensure API key is valid
-- Ensure the site has hotspot/guest portal enabled
-
-#### Application won't start
-
-- Check all environment variables are set
-- Verify Docker container has network access to UniFi controller
-- Check logs: `docker compose logs unifi-voucher-manager`
+- **Vouchers not appearing or connection issue to UniFi controller**
+  - Verify `UNIFI_CONTROLLER_URL` is correct and accessible
+  - Verify `UNIFI_SITE_ID` matches your controller's site
+  - Check if UniFi controller is running and reachable
+  - Ensure API key is valid
+  - Ensure the site has hotspot/guest portal enabled
+- **Application won't start**
+  - Check all environment variables are set
+  - Verify Docker container has network access to UniFi controller
+  - Check logs: `docker compose logs unifi-voucher-manager`
 
 ### Getting Help
 
