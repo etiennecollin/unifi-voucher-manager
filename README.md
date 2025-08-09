@@ -120,8 +120,8 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 | `FRONTEND_TO_BACKEND_URL` | Optional | URL where the frontend will make its API requests to the backend.                                                      | `http://127.0.0.1` (default)     |
 | `BACKEND_BIND_HOST`       | Optional | Address on which the server binds.                                                                                     | `127.0.0.1` (default)            |
 | `BACKEND_BIND_PORT`       | Optional | Port on which the backend server binds.                                                                                | `8080` (default)                 |
+| `BACKEND_LOG_LEVEL`       | Optional | Log level of the Rust backend.                                                                                         | `info`(default)                  |
 | `TIMEZONE`                | Optional | Server [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).                                  | `UTC` (default)                  |
-| `RUST_LOG`                | Optional | Log level of the Rust backend.                                                                                         | `info`(default)                  |
 
 ### Getting UniFi API Credentials
 
