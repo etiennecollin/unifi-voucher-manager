@@ -18,8 +18,9 @@ async fn main() {
     tracing_subscriber::fmt()
         .with_env_filter(
             EnvFilter::builder()
+                .with_env_var("BACKEND_LOG_LEVEL")
                 .with_default_directive(LevelFilter::INFO.into())
-                .from_env_lossy(), // use RUST_LOG env variable when running
+                .from_env_lossy(),
         )
         .init();
 
