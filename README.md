@@ -6,7 +6,7 @@
 A modern, touch-friendly web application for managing WiFi vouchers on UniFi controllers.
 Perfect for businesses, cafes, hotels, and home networks that need to provide guest WiFi access.
 
-![WiFi Voucher Manager](./assets/frontend.png)
+![WiFi Voucher Manager](./assets/view.png)
 
 <!-- vim-markdown-toc GFM -->
 
