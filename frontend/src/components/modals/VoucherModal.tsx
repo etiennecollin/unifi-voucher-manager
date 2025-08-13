@@ -92,7 +92,7 @@ export default function VoucherModal({ voucher, onClose }: Props) {
           ).map(([label, value]) => (
             <div
               key={label}
-              className="flex justify-between items-center p-4 bg-interactive border border-subtle rounded-xl space-x-4"
+              className="flex-center-between p-4 bg-interactive border border-subtle rounded-xl space-x-4"
             >
               <span className="font-semibold text-primary">{label}:</span>
               <span className="text-secondary">{value}</span>

@@ -29,7 +29,7 @@ const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
       {editMode && (
         <div className="absolute top-3 right-3 z-1000">
           <div
-            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-smooth
+            className={`w-6 h-6 rounded-full border-2 flex-center
             ${selected ? "selected-accent" : "unselected-neutral"}`}
           >
             {selected && <div className="w-3 h-3 bg-white rounded-full" />}
@@ -66,7 +66,7 @@ const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
           </div>
         )}
 
-        <div className="flex justify-between items-center">
+        <div className="flex-center-between">
           <span
             className={`px-2 py-1 rounded-lg text-xs font-semibold uppercase ${statusClass}`}
           >
