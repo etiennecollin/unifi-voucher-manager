@@ -11,7 +11,7 @@ type Props = {
   voucher: Voucher;
   selected: boolean;
   editMode: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
