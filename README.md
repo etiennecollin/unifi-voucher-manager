@@ -11,7 +11,7 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 <!-- vim-markdown-toc GFM -->
 
 - [✨ Features](#-features)
-  - [🎫 Voucher Management](#-voucher-management)
+  - [🎫 Voucher Management & WiFi QR Code](#-voucher-management--wifi-qr-code)
   - [🎨 Modern Interface](#-modern-interface)
   - [🔧 Technical Features](#-technical-features)
 - [🚀 Quick Start](#-quick-start)
@@ -28,7 +28,7 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 
 ## ✨ Features
 
-### 🎫 Voucher Management
+### 🎫 Voucher Management & WiFi QR Code
 
 - **Quick Create** - Generate guest vouchers with preset durations (1 hour to 1 week)
 - **Custom Create** - Full control over voucher parameters:
@@ -41,6 +41,7 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 - **Search Vouchers** - Search vouchers by name
 - **Bulk Operations** - Select and delete multiple vouchers
 - **Auto-cleanup** - Remove expired vouchers with a single click
+- **QR Code** - Easily connect guests to your network
 
 ### 🎨 Modern Interface
 
@@ -110,18 +111,26 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 
 ### Environment Variables
 
-| Variable                  | Type     | Description                                                                                                            | Example (default if optional)    |
-| ------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `UNIFI_CONTROLLER_URL`    | Required | URL to your UniFi controller with protocol.                                                                            | `https://unifi.example.com:8443` |
-| `UNIFI_API_KEY`           | Required | API Key for your UniFi controller.                                                                                     | `abc123...`                      |
-| `UNIFI_SITE_ID`           | Optional | Site ID of your UniFi controller. Using the value `default`, the backend will try to fetch the ID of the default site. | `default` (default)              |
-| `FRONTEND_BIND_HOST`      | Optional | Address on which the frontend server binds.                                                                            | `0.0.0.0` (default)              |
-| `FRONTEND_BIND_PORT`      | Optional | Port on which the frontend server binds.                                                                               | `3000` (default)                 |
-| `FRONTEND_TO_BACKEND_URL` | Optional | URL where the frontend will make its API requests to the backend.                                                      | `http://127.0.0.1` (default)     |
-| `BACKEND_BIND_HOST`       | Optional | Address on which the server binds.                                                                                     | `127.0.0.1` (default)            |
-| `BACKEND_BIND_PORT`       | Optional | Port on which the backend server binds.                                                                                | `8080` (default)                 |
-| `BACKEND_LOG_LEVEL`       | Optional | Log level of the Rust backend.                                                                                         | `info`(default)                  |
-| `TIMEZONE`                | Optional | Server [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).                                  | `UTC` (default)                  |
+Make sure to configure the required variables. The optional variables generally have default values that you should not have to change.
+
+To configure the WiFi QR code, you are required to configure the `WIFI_SSID` and `WIFI_PASSWORD` variables.
+
+| Variable                  | Type     | Description                                                                                                            | Example                          | Type                                                                            |
+| ------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
+| `UNIFI_CONTROLLER_URL`    | Required | URL to your UniFi controller with protocol.                                                                            | `https://unifi.example.com:8443` | `string`                                                                        |
+| `UNIFI_API_KEY`           | Required | API Key for your UniFi controller.                                                                                     | `abc123...`                      | `string`                                                                        |
+| `UNIFI_SITE_ID`           | Optional | Site ID of your UniFi controller. Using the value `default`, the backend will try to fetch the ID of the default site. | `default` (default)              | `string`                                                                        |
+| `FRONTEND_BIND_HOST`      | Optional | Address on which the frontend server binds.                                                                            | `0.0.0.0` (default)              | `IPv4`                                                                          |
+| `FRONTEND_BIND_PORT`      | Optional | Port on which the frontend server binds.                                                                               | `3000` (default)                 | `u16`                                                                           |
+| `FRONTEND_TO_BACKEND_URL` | Optional | URL where the frontend will make its API requests to the backend.                                                      | `http://127.0.0.1` (default)     | `URL`                                                                           |
+| `BACKEND_BIND_HOST`       | Optional | Address on which the server binds.                                                                                     | `127.0.0.1` (default)            | `IPv4`                                                                          |
+| `BACKEND_BIND_PORT`       | Optional | Port on which the backend server binds.                                                                                | `8080` (default)                 | `u16`                                                                           |
+| `BACKEND_LOG_LEVEL`       | Optional | Log level of the Rust backend.                                                                                         | `info`(default)                  | `trace\|debug\|info\|warn\|error`                                               |
+| `TIMEZONE`                | Optional | [Timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) used to format dates and time.           | `UTC` (default)                  | [`timezone`](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) |
+| `WIFI_SSID`               | Optional | WiFi SSID used for the QR code. (required for QR code to be generated)                                                 | `My WiFi SSID`                   | `string`                                                                        |
+| `WIFI_PASSWORD`           | Optional | WiFi password used for the QR code (required for QR code to be generated)                                              | `My WiFi Password`               | `string`                                                                        |
+| `WIFI_TYPE`               | Optional | WiFi security type used. Defaults to `WPA` if a password is provided and `nopass` otherwise.                           | `WPA`                            | `WPA\|WEP\|nopass`                                                              |
+| `WIFI_HIDDEN`             | Optional | Whether the WiFi SSID is hidden or broadcasted.                                                                        | `true` (default)                 | `bool`                                                                          |
 
 ### Getting UniFi API Credentials
 
@@ -144,6 +153,9 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
   - Check all environment variables are set
   - Verify Docker container has network access to UniFi controller
   - Check logs: `docker compose logs unifi-voucher-manager`
+- **The WiFi QR code button is seems disabled**
+  - Check the [Environment Variables](#environment-variables) section and make sure you configured the variables required for the WiFi QR code.
+  - Check the browser console for variable configuration errors (generally by hitting `F12` and going to the 'console' tab).
 
 ### Getting Help
 
