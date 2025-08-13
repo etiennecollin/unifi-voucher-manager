@@ -355,7 +355,7 @@
 /* -------------------------------------------------- */
 
 @utility btn {
-  @apply inline-flex items-center justify-center font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer px-4 py-2 disabled:opacity-50 disabled:bg-neutral-500 disabled:hover:bg-neutral-600 text-white;
+  @apply inline-flex items-center justify-center font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer px-4 py-2 disabled:opacity-50 disabled:bg-neutral-500 disabled:hover:bg-neutral-600 border border-default;
 }
 
 @layer components {
