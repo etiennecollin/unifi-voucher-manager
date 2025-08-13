@@ -1,17 +1,19 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, RefObject } from "react";
 
 type Props = {
   onClose: () => void;
   /** Extra classes for the content container */
   contentClassName?: string;
+  ref?: RefObject<HTMLDivElement | null>;
   children: ReactNode;
 };
 
 export default function Modal({
   onClose,
   contentClassName = "",
+  ref,
   children,
 }: Props) {
   // lock scroll + handle Escape
@@ -41,6 +43,7 @@ export default function Modal({
     >
       <div
         className={`bg-surface border border-default flex flex-col max-h-9/10 max-w-lg overflow-hidden relative rounded-xl shadow-2xl w-full ${contentClassName}`}
+        ref={ref}
       >
         <button
           onClick={onClose}
