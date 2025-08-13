@@ -1,21 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ThemeSwitcher from "@/components/utils/ThemeSwitcher";
 import WifiQrModal from "@/components/modals/WifiQrModal";
 import { generateWifiConfig, WifiConfig } from "@/utils/wifi";
 
-const wifiConfig: WifiConfig | null = (() => {
-  try {
-    return generateWifiConfig();
-  } catch (e) {
-    console.warn(`Could not generate WiFi configuration: ${e}`);
-    return null;
-  }
-})();
-
 export default function Header() {
   const [showWifi, setShowWifi] = useState(false);
+  const [wifiConfig, setWifiConfig] = useState<WifiConfig | null>(null);
+
+  useEffect(() => {
+    const config: WifiConfig | null = (() => {
+      try {
+        return generateWifiConfig();
+      } catch (e) {
+        console.warn(`Could not generate WiFi configuration: ${e}`);
+        return null;
+      }
+    })();
+
+    setWifiConfig(config);
+  });
 
   return (
     <header className="bg-surface border-b border-default sticky top-0 z-7000">
