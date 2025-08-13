@@ -79,11 +79,15 @@
   --shadow-elevation-dark: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* -------------------------------------------------- */
-/* 0. Semantic Color Utilities - Theme System         */
-/* -------------------------------------------------- */
+/* ========================================================================== */
+/* 0. Semantic Color Utilities                                                */
+/* ========================================================================== */
 
-/* Text Colors - Semantic */
+/* ---------------------------------- */
+/* Base                               */
+/* ---------------------------------- */
+
+/* Text */
 @utility text-primary {
   @apply text-neutral-900 dark:text-neutral-50;
 }
@@ -100,7 +104,58 @@
   @apply text-primary-700 dark:text-primary-300;
 }
 
-/* Status Text Colors */
+/* Background */
+@utility bg-page {
+  @apply bg-neutral-50 dark:bg-neutral-900;
+}
+@utility bg-surface {
+  @apply bg-white dark:bg-neutral-800;
+}
+@utility bg-overlay {
+  @apply bg-black/50 dark:bg-black/70;
+}
+@utility bg-disabled {
+  @apply bg-neutral-400 dark:bg-neutral-600;
+}
+
+/* Borders */
+@utility border-default {
+  @apply border-neutral-200 dark:border-neutral-700;
+}
+@utility border-subtle {
+  @apply border-neutral-100 dark:border-neutral-800;
+}
+@utility border-intense {
+  @apply border-neutral-400 dark:border-neutral-500;
+}
+@utility border-accent {
+  @apply border-primary-500 dark:border-primary-500;
+}
+@utility border-emphasis {
+  @apply border-primary-600 dark:border-primary-300;
+}
+
+/* Focus */
+@utility focus-accent {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
+}
+@utility focus-danger {
+  @apply focus:outline-none focus:ring-2 focus:ring-danger-500;
+}
+
+/* Selected */
+@utility selected-accent {
+  @apply border-accent bg-primary-600;
+}
+@utility unselected-neutral {
+  @apply border-default bg-surface;
+}
+
+/* ---------------------------------- */
+/* Status                             */
+/* ---------------------------------- */
+
+/* Text */
 @utility text-status-success {
   @apply text-success-700 dark:text-success-400;
 }
@@ -114,21 +169,7 @@
   @apply text-primary-700 dark:text-primary-400;
 }
 
-/* Background Colors - Semantic */
-@utility bg-page {
-  @apply bg-neutral-50 dark:bg-neutral-900;
-}
-@utility bg-surface {
-  @apply bg-white dark:bg-neutral-800;
-}
-@utility bg-surface-elevated {
-  @apply bg-white dark:bg-neutral-700;
-}
-@utility bg-overlay {
-  @apply bg-black/50 dark:bg-black/70;
-}
-
-/* Status Backgrounds */
+/* Background */
 @utility bg-status-success {
   @apply bg-success-100 dark:bg-success-900/30;
 }
@@ -142,32 +183,7 @@
   @apply bg-primary-100 dark:bg-primary-900/30;
 }
 
-/* Interactive Backgrounds */
-@utility bg-interactive {
-  @apply bg-neutral-50 dark:bg-neutral-700;
-}
-@utility bg-interactive-hover {
-  @apply hover:bg-neutral-100 dark:hover:bg-neutral-600;
-}
-@utility bg-interactive-active {
-  @apply bg-neutral-200 dark:bg-neutral-600;
-}
-
-/* Border Colors - Semantic */
-@utility border-default {
-  @apply border-neutral-200 dark:border-neutral-700;
-}
-@utility border-subtle {
-  @apply border-neutral-100 dark:border-neutral-800;
-}
-@utility border-accent {
-  @apply border-primary-500 dark:border-primary-400;
-}
-@utility border-emphasis {
-  @apply border-primary-600 dark:border-primary-300;
-}
-
-/* Status Borders */
+/* Borders */
 @utility border-status-success {
   @apply border-success-600;
 }
@@ -181,54 +197,33 @@
   @apply border-primary-600;
 }
 
-/* Focus States */
-@utility focus-accent {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
+/* ---------------------------------- */
+/* Interactive                        */
+/* ---------------------------------- */
+
+@utility bg-interactive {
+  @apply bg-neutral-50 dark:bg-neutral-700;
 }
-@utility focus-danger {
-  @apply focus:outline-none focus:ring-2 focus:ring-danger-500;
+@utility bg-interactive-hover {
+  @apply hover:bg-neutral-100 dark:hover:bg-neutral-600;
+}
+@utility interactive-disabled {
+  @apply disabled:opacity-50 disabled:bg-disabled disabled:hover:bg-disabled disabled:text-primary disabled:border-default disabled:cursor-default;
 }
 
-/* Tab States */
-@utility tab-active {
-  @apply text-brand font-semibold border-b-3 border-accent;
-}
-@utility tab-inactive {
-  @apply text-secondary bg-interactive-hover border-b-3 border-transparent hover:border-default;
-}
-
-/* Selection States */
-@utility selected-accent {
-  @apply border-accent bg-primary-600;
-}
-@utility unselected-neutral {
-  @apply border-default bg-surface;
-}
-
-/* -------------------------------------------------- */
-/* 1. Semantic Animation Utilities - Motion System    */
-/* -------------------------------------------------- */
+/* ========================================================================== */
+/* 1. Semantic Animation Utilities                                            */
+/* ========================================================================== */
 
 /* Hover Effects */
 @utility hover-lift {
   @apply hover:-translate-y-1 hover:shadow-elevation hover:dark:shadow-elevation-dark;
 }
 @utility hover-subtle {
-  @apply hover:bg-interactive-hover;
+  @apply bg-interactive-hover;
 }
 @utility hover-scale {
   @apply hover:scale-105;
-}
-
-/* Transition Speeds */
-@utility transition-fast {
-  transition: all 0.15s ease;
-}
-@utility transition-smooth {
-  transition: all 0.2s ease;
-}
-@utility transition-slow {
-  transition: all 0.3s ease;
 }
 
 /* Slide Animations */
@@ -237,18 +232,6 @@
 }
 @utility slide-in-right-visible {
   @apply translate-x-0;
-}
-@utility slide-in-left {
-  @apply transform transition-transform duration-300 ease-out -translate-x-full;
-}
-@utility slide-in-left-visible {
-  @apply translate-x-0;
-}
-@utility slide-in-up {
-  @apply transform transition-transform duration-300 ease-out translate-y-full;
-}
-@utility slide-in-up-visible {
-  @apply translate-y-0;
 }
 
 /* Fade Animations */
@@ -267,10 +250,8 @@
 
 /* Interactive States */
 @utility interactive-element {
-  @apply transition-smooth cursor-pointer focus-accent;
-}
-@utility card-interactive {
-  @apply interactive-element hover-lift;
+  transition: all 0.2s ease;
+  @apply cursor-pointer focus-accent;
 }
 
 /* Focus Animations */
@@ -281,9 +262,22 @@
   @apply focus:outline-none focus:ring-2 focus:ring-danger-500 focus:ring-offset-2 transition-all duration-200;
 }
 
-/* -------------------------------------------------- */
-/* 2. Base layer: resets, defaults, theming, scrollbar */
-/* -------------------------------------------------- */
+/* ========================================================================== */
+/* 2. Utilities                                                               */
+/* ========================================================================== */
+@utility flex-center {
+  @apply flex items-center justify-center;
+}
+@utility flex-center-between {
+  @apply flex items-center justify-between;
+}
+@utility inline-flex-center {
+  @apply inline-flex items-center justify-center;
+}
+
+/* ========================================================================== */
+/* 3. Base layer: resets, defaults, theming, scrollbar                        */
+/* ========================================================================== */
 @layer base {
   * {
     @apply transition duration-200 ease-in-out;
@@ -350,53 +344,47 @@
   }
 }
 
-/* -------------------------------------------------- */
-/* 3. Components layer: reusable patterns             */
-/* -------------------------------------------------- */
+/* ========================================================================== */
+/* 4. Components layer: reusable patterns                                     */
+/* ========================================================================== */
 
 @utility btn {
-  @apply inline-flex items-center justify-center font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer px-4 py-2 disabled:opacity-50 disabled:bg-neutral-500 disabled:hover:bg-neutral-600 border border-default;
+  @apply inline-flex-center font-medium rounded-lg focus:ring-2 cursor-pointer px-4 py-2 border interactive-disabled border-default text-primary;
 }
 
 @layer components {
   /* Buttons */
   .btn-primary {
-    @apply btn bg-primary-500 hover:bg-primary-600 focus:ring-primary-300;
+    @apply btn text-white bg-primary-500 border-primary-600 hover:bg-primary-600 focus:ring-primary-300;
   }
   .btn-secondary {
-    @apply btn bg-secondary-500 hover:bg-secondary-600 focus:ring-secondary-300;
+    @apply btn text-white bg-secondary-500 border-secondary-600 hover:bg-secondary-600 focus:ring-secondary-300;
   }
   .btn-success {
-    @apply btn bg-success-500 hover:bg-success-600 focus:ring-success-300;
+    @apply btn text-white bg-success-500 border-success-600 hover:bg-success-600 focus:ring-success-300;
   }
   .btn-danger {
-    @apply btn bg-danger-500 hover:bg-danger-600 focus:ring-danger-300;
+    @apply btn text-white bg-danger-500 border-danger-600 hover:bg-danger-600 focus:ring-danger-300;
   }
   .btn-warning {
-    @apply btn bg-warning-500 hover:bg-warning-600 focus:ring-warning-300;
+    @apply btn text-white bg-warning-500 border-warning-600 hover:bg-warning-600 focus:ring-warning-300;
   }
 
-  /* Cards */
   .card {
     @apply bg-surface border border-default rounded-xl shadow-soft dark:shadow-soft-dark p-4 border-1 w-full;
   }
-
-  /* Custom styled select with arrow */
-  .icon-button {
-    @apply inline-flex items-center justify-center w-9 h-9 text-sm rounded-lg bg-surface bg-interactive-hover border border-default focus-accent;
+  .card-interactive {
+    @apply interactive-element hover-lift;
   }
 
   .voucher-code {
     @apply font-bold text-brand font-mono tracking-wider;
   }
-}
 
-/* -------------------------------------------------- */
-/* 4. Utilities layer: small helpers                  */
-/* -------------------------------------------------- */
-@layer utilities {
-  /* Flex center shortcuts */
-  .flex-center {
-    @apply flex items-center justify-center;
+  .tab-active {
+    @apply text-brand font-semibold border-b-3 border-accent;
+  }
+  .tab-inactive {
+    @apply text-secondary bg-interactive-hover border-b-3 border-transparent hover:border-intense;
   }
 }
