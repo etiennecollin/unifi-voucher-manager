@@ -1,6 +1,8 @@
 import { getRuntimeConfig } from "@/utils/runtimeConfig";
 
-type WifiType = "WPA" | "WEP" | "nopass";
+// Derive the type from the array
+const validWifiTypes = ["WPA", "WEP", "nopass"] as const;
+type WifiType = (typeof validWifiTypes)[number];
 
 export interface WifiConfig {
   ssid: string;
@@ -50,15 +52,15 @@ export function generateWifiConfig(): WifiConfig {
         type_parsed = "nopass";
         break;
       default:
-        // TODO: Find how to print a type
-        throw `Invalid WiFi type provided: ${type}. Valid types: "WPA" | "WEP" | "nopass"`;
+        throw `Invalid WiFi type provided: ${type}. Valid types: ${validWifiTypes.join(
+          " | ",
+        )}`;
     }
   }
 
   if (password && type_parsed === "nopass") {
     throw "Incoherent WiFi configuration: password provided, but type set to 'nopass'";
   } else if (!password && type_parsed !== "nopass") {
-    // TODO: This is true for WPA, but check for WEP
     throw "Incoherent WiFi configuration: password not provided, but type implies a password";
   }
 
