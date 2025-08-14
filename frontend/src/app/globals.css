@@ -387,4 +387,7 @@
   .tab-inactive {
     @apply text-secondary bg-interactive-hover border-b-3 border-transparent hover:border-intense;
   }
+  .sticky-tabs {
+    top: var(--header-height);
+  }
 }
