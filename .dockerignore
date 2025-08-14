@@ -1,8 +1,17 @@
-README.md
-.env
-compose.yaml
-assets
+**
 
-Dockerfile
-.git
-.gitignore
+!backend/.cargo/**
+!backend/src/**
+!backend/Cargo.lock
+!backend/Cargo.toml
+
+!frontend/next-env.d.ts
+!frontend/next.config.ts
+!frontend/package-lock.json
+!frontend/package.json
+!frontend/postcss.config.mjs
+!frontend/public/**
+!frontend/src/**
+!frontend/tsconfig.json
+
+!scripts/**
