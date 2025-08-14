@@ -1,3 +1,5 @@
+import { getRuntimeConfig } from "@/utils/runtimeConfig";
+
 type WifiType = "WPA" | "WEP" | "nopass";
 
 export interface WifiConfig {
@@ -8,10 +10,12 @@ export interface WifiConfig {
 }
 
 export function generateWifiConfig(): WifiConfig {
-  const ssid = process.env.NEXT_WIFI_SSID;
-  const password = process.env.NEXT_WIFI_PASSWORD;
-  const type = process.env.NEXT_WIFI_TYPE;
-  const hidden = process.env.NEXT_WIFI_HIDDEN;
+  const {
+    WIFI_SSID: ssid,
+    WIFI_PASSWORD: password,
+    WIFI_TYPE: type,
+    WIFI_HIDDEN: hidden,
+  } = getRuntimeConfig();
 
   if (ssid == null) {
     throw "No SSID provided, use the environment variable WIFI_SSID to set one";

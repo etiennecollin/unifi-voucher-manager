@@ -17,8 +17,7 @@ sleep 3
 # Start frontend in foreground
 echo "Starting frontend..."
 NEXT_TELEMETRY_DISABLED="1" NODE_ENV="production" \
-  HOSTNAME=${FRONTEND_BIND_HOST} PORT="${FRONTEND_BIND_PORT}" \
-  UNIFI_CONTROLLER_URL="" UNIFI_API_KEY="" UNIFI_SITE_ID="" \
+  HOSTNAME="${FRONTEND_BIND_HOST}" PORT="${FRONTEND_BIND_PORT}" \
   node ./frontend/server.js &
 FRONTEND_PID=$!
 
