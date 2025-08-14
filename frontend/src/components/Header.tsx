@@ -20,7 +20,7 @@ export default function Header() {
     })();
 
     setWifiConfig(config);
-  });
+  }, [generateWifiConfig]);
 
   return (
     <header className="bg-surface border-b border-default sticky top-0 z-7000">

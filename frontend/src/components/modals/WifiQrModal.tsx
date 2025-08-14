@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import Modal from "@/components/modals/Modal";
 import { QRCodeSVG } from "qrcode.react";
 import { generateWiFiQRString, WifiConfig } from "@/utils/wifi";
@@ -13,8 +13,10 @@ type Props = {
 export default function WifiQrModal({ wifiConfig, onClose }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const [qrSize, setQrSize] = useState(220);
-  const wifiString = wifiConfig && generateWiFiQRString(wifiConfig);
-  console.log(wifiString);
+  const wifiString = useMemo(
+    () => wifiConfig && generateWiFiQRString(wifiConfig),
+    [wifiConfig],
+  );
 
   useEffect(() => {
     function updateSize() {
