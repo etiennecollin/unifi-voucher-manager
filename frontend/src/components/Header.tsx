@@ -51,13 +51,18 @@ export default function Header() {
         <div className="flex-center gap-3">
           <button
             onClick={() => setShowWifi(true)}
-            className="btn"
+            className="btn p-1"
             disabled={!wifiConfig}
             aria-label="Open Wi‑Fi QR code"
             title="Open Wi‑Fi QR code"
           >
-            {/* TODO: Make content a small QR code SVG */}
-            QR
+            <img
+              src="/qr.svg"
+              width={45}
+              height={45}
+              className="dark:invert"
+              alt="QR code icon"
+            />
           </button>
           <ThemeSwitcher />
         </div>

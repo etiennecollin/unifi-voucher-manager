@@ -202,10 +202,10 @@
 /* ---------------------------------- */
 
 @utility bg-interactive {
-  @apply bg-neutral-50 dark:bg-neutral-700;
+  @apply bg-neutral-50 dark:bg-neutral-800;
 }
 @utility bg-interactive-hover {
-  @apply hover:bg-neutral-100 dark:hover:bg-neutral-600;
+  @apply hover:bg-neutral-100 dark:hover:bg-neutral-700;
 }
 @utility interactive-disabled {
   @apply disabled:opacity-50 disabled:bg-disabled disabled:hover:bg-disabled disabled:text-primary disabled:border-default disabled:cursor-default;
@@ -325,7 +325,7 @@
   }
 
   select {
-    @apply appearance-none bg-surface border border-default cursor-pointer focus-accent px-3 py-2 rounded-lg w-full;
+    @apply appearance-none bg-surface bg-interactive-hover border border-default cursor-pointer focus-accent px-3 py-2 rounded-lg w-full;
   }
   input {
     @apply bg-surface border border-default focus-accent px-3 py-2 rounded-lg w-full;
@@ -349,7 +349,7 @@
 /* ========================================================================== */
 
 @utility btn {
-  @apply inline-flex-center font-medium rounded-lg focus:ring-2 cursor-pointer px-4 py-2 border interactive-disabled border-default text-primary;
+  @apply inline-flex-center bg-interactive-hover font-medium rounded-lg focus:ring-2 cursor-pointer px-4 py-2 border interactive-disabled border-default text-primary;
 }
 
 @layer components {
