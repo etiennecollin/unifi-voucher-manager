@@ -64,16 +64,18 @@ export function generateWifiConfig(): WifiConfig {
 
   let hidden_parsed: boolean;
   if (hidden == null) {
-    hidden_parsed = true;
+    hidden_parsed = false;
     console.log(
       `WiFi Configuration: hidden state not provided, defaulting to 'hidden=${hidden_parsed}' `,
     );
   } else {
     switch (hidden.trim().toLowerCase()) {
       case "true":
+      case "1":
         hidden_parsed = true;
         break;
       case "false":
+      case "0":
         hidden_parsed = false;
         break;
       default:
