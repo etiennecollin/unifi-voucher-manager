@@ -130,7 +130,7 @@ To configure the WiFi QR code, you are required to configure the `WIFI_SSID` and
 | `WIFI_SSID`               | Optional | WiFi SSID used for the QR code. (required for QR code to be generated)                                                 | `My WiFi SSID`                   | `string`                                                                        |
 | `WIFI_PASSWORD`           | Optional | WiFi password used for the QR code (required for QR code to be generated)                                              | `My WiFi Password`               | `string`                                                                        |
 | `WIFI_TYPE`               | Optional | WiFi security type used. Defaults to `WPA` if a password is provided and `nopass` otherwise.                           | `WPA`                            | `WPA\|WEP\|nopass`                                                              |
-| `WIFI_HIDDEN`             | Optional | Whether the WiFi SSID is hidden or broadcasted.                                                                        | `true` (default)                 | `bool`                                                                          |
+| `WIFI_HIDDEN`             | Optional | Whether the WiFi SSID is hidden or broadcasted.                                                                        | `false` (default)                | `bool`                                                                          |
 
 ### Getting UniFi API Credentials
 
