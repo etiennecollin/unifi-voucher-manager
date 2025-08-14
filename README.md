@@ -1,4 +1,4 @@
-# WiFi Voucher Manager
+# UniFi Voucher Manager
 
 [![Docker Image Version (latest by date)](https://img.shields.io/docker/v/etiennecollin/unifi-voucher-manager?sort=semver&label=Version&logo=docker&color=blue) ![Docker Pulls](https://img.shields.io/docker/pulls/etiennecollin/unifi-voucher-manager?label=Pulls&logo=docker&color=blue)](https://hub.docker.com/r/etiennecollin/unifi-voucher-manager)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/etiennecollin/unifi-voucher-manager/release_docker.yaml?label=Docker%20Build&logo=github) ![GitHub License](https://img.shields.io/github/license/etiennecollin/unifi-voucher-manager?label=License&logo=github&color=red)](https://github.com/etiennecollin/unifi-voucher-manager)
