@@ -81,6 +81,10 @@ WORKDIR /app
 RUN addgroup -g 1001 -S appgroup && \
     adduser -S appuser -u 1001 -G appgroup
 
+# Copy entrypoint script
+COPY ./scripts/entrypoint.sh ./
+RUN chmod +x entrypoint.sh
+
 # Copy run wrapper script
 COPY ./scripts/run_wrapper.sh ./
 RUN chmod +x run_wrapper.sh
@@ -108,4 +112,5 @@ ENV BACKEND_BIND_PORT="8080"
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD /usr/local/bin/healthcheck.sh
 
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["./run_wrapper.sh"]

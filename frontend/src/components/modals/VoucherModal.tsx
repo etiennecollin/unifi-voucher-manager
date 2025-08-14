@@ -6,7 +6,6 @@ import { api } from "@/utils/api";
 import { useEffect, useRef, useState } from "react";
 import {
   formatBytes,
-  formatDate,
   formatDuration,
   formatGuestUsage,
   formatSpeed,
@@ -64,13 +63,11 @@ export default function VoucherModal({ voucher, onClose }: Props) {
             [
               ["Status", details.expired ? "Expired" : "Active"],
               ["Name", details.name || "No note"],
-              ["Created", formatDate(details.createdAt)],
+              ["Created", details.createdAt],
               ...(details.activatedAt
-                ? [["Activated", formatDate(details.activatedAt)]]
+                ? [["Activated", details.activatedAt]]
                 : []),
-              ...(details.expiresAt
-                ? [["Expires", formatDate(details.expiresAt)]]
-                : []),
+              ...(details.expiresAt ? [["Expires", details.expiresAt]] : []),
               ["Duration", formatDuration(details.timeLimitMinutes)],
               [
                 "Guest Usage",
@@ -92,7 +89,7 @@ export default function VoucherModal({ voucher, onClose }: Props) {
           ).map(([label, value]) => (
             <div
               key={label}
-              className="flex justify-between items-center p-4 bg-interactive border border-subtle rounded-xl space-x-4"
+              className="flex-center-between p-4 bg-interactive border border-subtle rounded-xl space-x-4"
             >
               <span className="font-semibold text-primary">{label}:</span>
               <span className="text-secondary">{value}</span>

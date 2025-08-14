@@ -18,6 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Load runtime config */}
+        <script src="/runtime-config.js"></script>
+      </head>
       <body className={`antialiased`}>{children}</body>
     </html>
   );

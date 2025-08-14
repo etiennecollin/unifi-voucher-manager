@@ -1,17 +1,12 @@
 import { Voucher } from "@/types/voucher";
-import {
-  formatCode,
-  formatDate,
-  formatDuration,
-  formatGuestUsage,
-} from "@/utils/format";
+import { formatCode, formatDuration, formatGuestUsage } from "@/utils/format";
 import { memo } from "react";
 
 type Props = {
   voucher: Voucher;
   selected: boolean;
   editMode: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
@@ -29,7 +24,7 @@ const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
       {editMode && (
         <div className="absolute top-3 right-3 z-1000">
           <div
-            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-smooth
+            className={`w-6 h-6 rounded-full border-2 flex-center
             ${selected ? "selected-accent" : "unselected-neutral"}`}
           >
             {selected && <div className="w-3 h-3 bg-white rounded-full" />}
@@ -62,20 +57,18 @@ const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
         {voucher.activatedAt && (
           <div className="flex justify-between">
             <span>First Used:</span>
-            <span className="text-xs">{formatDate(voucher.activatedAt)}</span>
+            <span className="text-xs">{voucher.activatedAt}</span>
           </div>
         )}
 
-        <div className="flex justify-between items-center">
+        <div className="flex-center-between">
           <span
             className={`px-2 py-1 rounded-lg text-xs font-semibold uppercase ${statusClass}`}
           >
             {voucher.expired ? "Expired" : "Active"}
           </span>
           {voucher.expiresAt && (
-            <span className="text-xs">
-              Expires: {formatDate(voucher.expiresAt)}
-            </span>
+            <span className="text-xs">Expires: {voucher.expiresAt}</span>
           )}
         </div>
       </div>

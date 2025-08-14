@@ -43,7 +43,7 @@ export default function Tabs() {
 
   return (
     <>
-      <nav className="bg-surface border-b border-default flex sticky top-16 z-2000 shadow-soft dark:shadow-soft-dark">
+      <nav className="bg-surface border-b border-default flex sticky sticky-tabs z-2000 shadow-soft dark:shadow-soft-dark">
         {enabledTabs.map((tabConfig) => (
           <button
             key={tabConfig.id}

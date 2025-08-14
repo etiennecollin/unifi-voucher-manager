@@ -35,6 +35,8 @@ export default function NotificationItem({ id, message, type, onDone }: Props) {
         return "border-status-success text-status-success";
       case "error":
         return "border-status-danger text-status-danger";
+      case "warning":
+        return "border-status-warning text-status-warning";
       default:
         return "border-status-info text-status-info";
     }
