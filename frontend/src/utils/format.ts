@@ -2,10 +2,6 @@ export function formatCode(code: string) {
   return code.length === 10 ? code.replace(/(.{5})(.{5})/, "$1-$2") : code;
 }
 
-export function formatDate(d: string) {
-  return new Date(d).toLocaleString();
-}
-
 export function formatDuration(m: number | null | undefined) {
   if (!m) return "Unlimited";
   const days = Math.floor(m / 1440),

@@ -1,10 +1,5 @@
 import { Voucher } from "@/types/voucher";
-import {
-  formatCode,
-  formatDate,
-  formatDuration,
-  formatGuestUsage,
-} from "@/utils/format";
+import { formatCode, formatDuration, formatGuestUsage } from "@/utils/format";
 import { memo } from "react";
 
 type Props = {
@@ -62,7 +57,7 @@ const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
         {voucher.activatedAt && (
           <div className="flex justify-between">
             <span>First Used:</span>
-            <span className="text-xs">{formatDate(voucher.activatedAt)}</span>
+            <span className="text-xs">{voucher.activatedAt}</span>
           </div>
         )}
 
@@ -73,9 +68,7 @@ const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
             {voucher.expired ? "Expired" : "Active"}
           </span>
           {voucher.expiresAt && (
-            <span className="text-xs">
-              Expires: {formatDate(voucher.expiresAt)}
-            </span>
+            <span className="text-xs">Expires: {voucher.expiresAt}</span>
           )}
         </div>
       </div>
