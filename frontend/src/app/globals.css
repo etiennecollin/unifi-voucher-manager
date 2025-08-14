@@ -118,6 +118,16 @@
   @apply bg-neutral-400 dark:bg-neutral-600;
 }
 
+@utility bg-interactive {
+  @apply bg-neutral-50 dark:bg-neutral-700;
+}
+@utility bg-interactive-hover {
+  @apply hover:bg-neutral-100 dark:hover:bg-neutral-600;
+}
+@utility interactive-disabled {
+  @apply disabled:opacity-50 disabled:bg-disabled disabled:hover:bg-disabled disabled:text-primary disabled:border-default disabled:cursor-default;
+}
+
 /* Borders */
 @utility border-default {
   @apply border-neutral-200 dark:border-neutral-700;
@@ -197,20 +207,6 @@
   @apply border-primary-600;
 }
 
-/* ---------------------------------- */
-/* Interactive                        */
-/* ---------------------------------- */
-
-@utility bg-interactive {
-  @apply bg-neutral-50 dark:bg-neutral-800;
-}
-@utility bg-interactive-hover {
-  @apply hover:bg-neutral-100 dark:hover:bg-neutral-700;
-}
-@utility interactive-disabled {
-  @apply disabled:opacity-50 disabled:bg-disabled disabled:hover:bg-disabled disabled:text-primary disabled:border-default disabled:cursor-default;
-}
-
 /* ========================================================================== */
 /* 1. Semantic Animation Utilities                                            */
 /* ========================================================================== */
@@ -246,12 +242,6 @@
 }
 @utility fade-out-hidden {
   @apply opacity-0;
-}
-
-/* Interactive States */
-@utility interactive-element {
-  transition: all 0.2s ease;
-  @apply cursor-pointer focus-accent;
 }
 
 /* Focus Animations */
@@ -374,7 +364,7 @@
     @apply bg-surface border border-default rounded-xl shadow-soft dark:shadow-soft-dark p-4 border-1 w-full;
   }
   .card-interactive {
-    @apply interactive-element hover-lift;
+    @apply cursor-pointer focus-accent hover-lift;
   }
 
   .voucher-code {
