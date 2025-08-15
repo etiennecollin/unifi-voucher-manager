@@ -20,6 +20,7 @@ pub struct Environment {
     pub unifi_api_key: String,
     pub backend_bind_host: String,
     pub backend_bind_port: u16,
+    pub unifi_has_valid_cert: bool,
     pub timezone: Tz,
 }
 
@@ -30,6 +31,13 @@ impl Environment {
 
         let unifi_controller_url: String =
             env::var("UNIFI_CONTROLLER_URL").map_err(|e| format!("UNIFI_CONTROLLER_URL: {e}"))?;
+
+        if !unifi_controller_url.starts_with("http://")
+            && !unifi_controller_url.starts_with("https://")
+        {
+            return Err("UNIFI_CONTROLLER_URL must start with http:// or https://".to_string());
+        }
+
         let unifi_api_key: String =
             env::var("UNIFI_API_KEY").map_err(|e| format!("UNIFI_API_KEY: {e}"))?;
         let unifi_site_id: String =
@@ -42,6 +50,17 @@ impl Environment {
                 .parse()
                 .map_err(|e| format!("Invalid BACKEND_BIND_PORT: {e}"))?,
             Err(_) => DEFAULT_BACKEND_BIND_PORT,
+        };
+
+        let unifi_has_valid_cert: bool = match env::var("UNIFI_HAS_VALID_CERT") {
+            Ok(val) => match val.trim().to_lowercase().as_str() {
+                "true" | "1" | "yes" => true,
+                "false" | "0" | "no" => false,
+                _ => {
+                    return Err("Invalid UNIFI_HAS_VALID_CERT, must be true/false".to_string());
+                }
+            },
+            Err(_) => true,
         };
 
         let timezone: Tz = match env::var("TIMEZONE") {
@@ -67,6 +86,7 @@ impl Environment {
             unifi_api_key,
             backend_bind_host,
             backend_bind_port,
+            unifi_has_valid_cert,
             timezone,
         })
     }

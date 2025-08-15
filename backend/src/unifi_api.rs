@@ -2,7 +2,7 @@ use chrono::DateTime;
 use chrono_tz::Tz;
 use reqwest::{Client, ClientBuilder, StatusCode};
 use std::{sync::OnceLock, time::Duration};
-use tracing::{error, info, warn};
+use tracing::{debug, error, info, warn};
 
 use crate::{
     ENVIRONMENT, Environment,
@@ -52,6 +52,7 @@ impl<'a> UnifiAPI<'a> {
             .timeout(Duration::from_secs(30))
             .connect_timeout(Duration::from_secs(10))
             .default_headers(headers)
+            .danger_accept_invalid_certs(!environment.unifi_has_valid_cert)
             .use_rustls_tls()
             .build()
             .expect("Failed to build UniFi reqwest client");
@@ -113,7 +114,11 @@ impl<'a> UnifiAPI<'a> {
             Ok(resp) => resp,
             Err(e) => {
                 let status = e.status().unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
-                error!("Request failed with status {}: {}", status, e.without_url());
+                error!(
+                    "Request failed with status {}: {:?}",
+                    status,
+                    e.without_url()
+                );
                 return Err(status);
             }
         };
@@ -134,9 +139,24 @@ impl<'a> UnifiAPI<'a> {
             }
         };
 
-        // It's a successful response, now parse the JSON
-        clean_response.json::<U>().await.map_err(|e| {
-            error!("Failed to parse response JSON: {}", e);
+        // It's a successful response, now get the response body
+        let response_text = clean_response.text().await.map_err(|e| {
+            error!("Failed to read response body: {:?}", e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
+
+        // Parse the response body as JSON
+        let response_json: serde_json::Value =
+            serde_json::from_str(&response_text).map_err(|e| {
+                error!("Failed to parse response body as JSON: {:?}", e);
+                debug!("Response body: {}", response_text);
+                StatusCode::INTERNAL_SERVER_ERROR
+            })?;
+
+        // Parse the JSON into the expected structure
+        serde_json::from_value::<U>(response_json).map_err(|e| {
+            error!("Failed to parse response JSON structure: {:?}", e);
+            debug!("Response body: {}", response_text);
             StatusCode::INTERNAL_SERVER_ERROR
         })
     }

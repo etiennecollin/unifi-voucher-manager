@@ -38,7 +38,7 @@ export default function CustomCreateTab() {
         setNewCode(code);
         form.reset();
       } else {
-        notify("Voucher created, but code not available", "error");
+        notify("Voucher created, but code not found in response", "warning");
       }
     } catch {
       notify("Failed to create voucher", "error");

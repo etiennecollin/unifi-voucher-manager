@@ -15,7 +15,7 @@ export default function NotificationItem({ id, message, type, onDone }: Props) {
   useEffect(() => {
     // slide in next tick
     const showTimer = setTimeout(() => setVisible(true), 10);
-    // slide out after 4s
+    // slide out after X ms
     const hideTimer = setTimeout(
       () => setVisible(false),
       NOTIFICATION_DURATION_MS,

@@ -11,10 +11,12 @@ services:
     restart: "unless-stopped"
     ports:
       - "3000:3000"
+    # SEE README FOR VALID ENVIRONMENT VARIABLES
+    environment:
+      UNIFI_CONTROLLER_URL: "URL to your UniFi controller with protocol (`http://` or `https://`)."
+      UNIFI_API_KEY: "API Key for your UniFi controller."
+      UNIFI_HAS_VALID_CERT: "true" # Set to false if your UniFi controller has a self-signed certificate
     # To put the environment variables in a `.env` file, uncomment the env_file
     # section and comment the environment section.
     # env_file:
     #   - ".env"
-    environment:
-      UNIFI_CONTROLLER_URL: "URL to your Unifi controller with protocol. Example: 'https://unifi.example.com:8443' or 'http://192.168.0.1'"
-      UNIFI_API_KEY: "API Key for your Unifi controller"
