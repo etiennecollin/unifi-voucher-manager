@@ -46,6 +46,7 @@ pub struct CreateVoucherRequest {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CreateVoucherResponse {
+    #[serde(alias = "data")]
     pub vouchers: Vec<Voucher>,
 }
 
