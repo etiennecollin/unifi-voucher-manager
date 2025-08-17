@@ -28,7 +28,7 @@ jobs:
         with:
           images: |
             ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
-            ghcr.io/${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -74,3 +74,7 @@ jobs:
           annotations: ${{ steps.meta.outputs.annotations }}
           provenance: true
           sbom: true
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:buildcache
+          cache-to: |
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:buildcache,mode=max
