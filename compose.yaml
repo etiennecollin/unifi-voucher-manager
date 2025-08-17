@@ -1,22 +1,25 @@
 ---
 services:
   unifi-voucher-manager:
-    image: "etiennecollin/unifi-voucher-manager:latest"
+    image: "docker.io/etiennecollin/unifi-voucher-manager:latest"
+    # Or use the github registry
+    # image: "ghcr.io/etiennecollin/unifi-voucher-manager:latest"
+
     # To build the image yourself
     # build:
     #   context: "./"
     #   target: "runtime"
     #   dockerfile: "./Dockerfile"
+
     container_name: "unifi-voucher-manager"
     restart: "unless-stopped"
     ports:
       - "3000:3000"
-    # SEE README FOR VALID ENVIRONMENT VARIABLES
+
+    # SEE README FOR ENVIRONMENT VARIABLES DOCUMENTATION
     environment:
       UNIFI_CONTROLLER_URL: "URL to your UniFi controller with protocol (`http://` or `https://`)."
       UNIFI_API_KEY: "API Key for your UniFi controller."
-      UNIFI_HAS_VALID_CERT: "true" # Set to false if your UniFi controller has a self-signed certificate
-    # To put the environment variables in a `.env` file, uncomment the env_file
-    # section and comment the environment section.
-    # env_file:
-    #   - ".env"
+      UNIFI_HAS_VALID_CERT: "true" # Set to false only if your UniFi controller does not use a valid SSL certificate. Typically, this should remain true when accessing the controller (UNIFI_CONTROLLER_URL) through a reverse proxy or any setup providing trusted SSL certificates (e.g., Let's Encrypt).
+      WIFI_SSID: "Your guest WiFi SSID" # Optional
+      WIFI_PASSWORD: "Youw guest WiFi password" # Optional
