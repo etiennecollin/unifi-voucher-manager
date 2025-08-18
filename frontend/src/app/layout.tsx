@@ -1,3 +1,4 @@
+import { GlobalProvider } from "@/contexts/GlobalContext";
 import "./globals.css";
 import type { Metadata } from "next";
 
@@ -22,7 +23,9 @@ export default function RootLayout({
         {/* Load runtime config */}
         <script src="/runtime-config.js"></script>
       </head>
-      <body className={`antialiased`}>{children}</body>
+      <body className={`antialiased`}>
+        <GlobalProvider>{children}</GlobalProvider>
+      </body>
     </html>
   );
 }

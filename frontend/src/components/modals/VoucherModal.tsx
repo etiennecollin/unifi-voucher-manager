@@ -10,7 +10,7 @@ import {
   formatGuestUsage,
   formatSpeed,
 } from "@/utils/format";
-import CopyCode from "@/components/utils/CopyCode";
+import VoucherCode from "@/components/utils/VoucherCode";
 import { Voucher } from "@/types/voucher";
 
 type Props = {
@@ -50,7 +50,7 @@ export default function VoucherModal({ voucher, onClose }: Props) {
 
   return (
     <Modal onClose={onClose}>
-      <CopyCode rawCode={rawCode} contentClassName="mb-8" />
+      <VoucherCode voucher={voucher} contentClassName="mb-8" />
       {loading ? (
         <Spinner />
       ) : error || details == null ? (

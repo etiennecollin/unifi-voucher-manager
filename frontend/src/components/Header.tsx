@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import ThemeSwitcher from "@/components/utils/ThemeSwitcher";
 import WifiQrModal from "@/components/modals/WifiQrModal";
-import { generateWifiConfig, WifiConfig } from "@/utils/wifi";
+import { useGlobal } from "@/contexts/GlobalContext";
 
 export default function Header() {
   const [showWifi, setShowWifi] = useState(false);
-  const [wifiConfig, setWifiConfig] = useState<WifiConfig | null>(null);
   const headerRef = useRef<HTMLElement>(null);
+  const { wifiConfig } = useGlobal();
 
   useEffect(() => {
     // Set initial height and update on resize
@@ -25,19 +25,6 @@ export default function Header() {
     window.addEventListener("resize", updateHeaderHeight);
     return () => window.removeEventListener("resize", updateHeaderHeight);
   }, []);
-
-  useEffect(() => {
-    const config: WifiConfig | null = (() => {
-      try {
-        return generateWifiConfig();
-      } catch (e) {
-        console.warn(`Could not generate WiFi configuration: ${e}`);
-        return null;
-      }
-    })();
-
-    setWifiConfig(config);
-  }, [generateWifiConfig]);
 
   return (
     <header
@@ -68,10 +55,7 @@ export default function Header() {
         </div>
       </div>
       {showWifi && wifiConfig && (
-        <WifiQrModal
-          wifiConfig={wifiConfig}
-          onClose={() => setShowWifi(false)}
-        />
+        <WifiQrModal onClose={() => setShowWifi(false)} />
       )}
     </header>
   );

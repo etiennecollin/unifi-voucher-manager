@@ -3,19 +3,22 @@
 import { copyText } from "@/utils/clipboard";
 import { formatCode } from "@/utils/format";
 import { notify } from "@/utils/notifications";
+import { VoucherPrintWindow } from "@/components/utils/VoucherPrintContent";
 import { useState } from "react";
+import { Voucher } from "@/types/voucher";
 
 type Props = {
-  rawCode: string;
+  voucher: Voucher;
   contentClassName?: string;
 };
 
-export default function CopyCode({ rawCode, contentClassName = "" }: Props) {
-  const code = formatCode(rawCode);
+export default function VoucherCode({ voucher, contentClassName = "" }: Props) {
+  const code = formatCode(voucher.code);
   const [copied, setCopied] = useState(false);
+  const [printing, setPrinting] = useState(false);
 
   const handleCopy = async () => {
-    if (await copyText(rawCode)) {
+    if (await copyText(voucher.code)) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
       notify("Code copied to clipboard!", "success");
@@ -32,10 +35,15 @@ export default function CopyCode({ rawCode, contentClassName = "" }: Props) {
       >
         {code}
       </div>
-
-      <button onClick={handleCopy} className="btn-success w-2/3">
-        {copied ? "Copied" : "Copy Code"}
-      </button>
+      <div className="flex-center gap-3">
+        <button onClick={handleCopy} className="btn-success">
+          {copied ? "Copied" : "Copy Code"}
+        </button>
+        <button onClick={() => setPrinting(true)} className="btn-primary">
+          Print Voucher
+        </button>
+        {printing && <VoucherPrintWindow voucher={voucher} />}
+      </div>
     </div>
   );
 }
