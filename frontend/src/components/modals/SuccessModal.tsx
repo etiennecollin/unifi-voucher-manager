@@ -1,5 +1,3 @@
-"use client";
-
 import Modal from "@/components/modals/Modal";
 import VoucherCode from "@/components/utils/VoucherCode";
 import { Voucher } from "@/types/voucher";

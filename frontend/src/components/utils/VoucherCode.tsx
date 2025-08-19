@@ -1,5 +1,3 @@
-"use client";
-
 import { copyText } from "@/utils/clipboard";
 import { formatCode } from "@/utils/format";
 import { notify } from "@/utils/notifications";

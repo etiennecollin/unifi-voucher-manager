@@ -1,5 +1,3 @@
-"use client";
-
 import { useGlobal } from "@/contexts/GlobalContext";
 
 export type Theme = "system" | "light" | "dark";
