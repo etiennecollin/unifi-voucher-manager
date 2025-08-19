@@ -16,7 +16,6 @@ export default function Modal({
   ref,
   children,
 }: Props) {
-  // lock scroll + handle Escape
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";

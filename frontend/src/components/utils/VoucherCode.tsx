@@ -3,9 +3,9 @@
 import { copyText } from "@/utils/clipboard";
 import { formatCode } from "@/utils/format";
 import { notify } from "@/utils/notifications";
-import { VoucherPrintWindow } from "@/components/utils/VoucherPrintContent";
 import { useState } from "react";
 import { Voucher } from "@/types/voucher";
+import { useRouter } from "next/navigation";
 
 type Props = {
   voucher: Voucher;
@@ -15,7 +15,7 @@ type Props = {
 export default function VoucherCode({ voucher, contentClassName = "" }: Props) {
   const code = formatCode(voucher.code);
   const [copied, setCopied] = useState(false);
-  const [printing, setPrinting] = useState(false);
+  const router = useRouter();
 
   const handleCopy = async () => {
     if (await copyText(voucher.code)) {
@@ -25,6 +25,13 @@ export default function VoucherCode({ voucher, contentClassName = "" }: Props) {
     } else {
       notify("Failed to copy code", "error");
     }
+  };
+
+  const handlePrint = () => {
+    const vouchersParam = encodeURIComponent(JSON.stringify([voucher]));
+    const printUrl = `/print?vouchers=${vouchersParam}&mode=list`;
+
+    router.replace(printUrl);
   };
 
   return (
@@ -39,10 +46,9 @@ export default function VoucherCode({ voucher, contentClassName = "" }: Props) {
         <button onClick={handleCopy} className="btn-success">
           {copied ? "Copied" : "Copy Code"}
         </button>
-        <button onClick={() => setPrinting(true)} className="btn-primary">
+        <button onClick={handlePrint} className="btn-primary">
           Print Voucher
         </button>
-        {printing && <VoucherPrintWindow voucher={voucher} />}
       </div>
     </div>
   );

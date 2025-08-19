@@ -1,6 +1,6 @@
 import { getRuntimeConfig } from "@/utils/runtimeConfig";
 
-// Derive the type from the array
+// Derive the type from the array for easy printing
 const validWifiTypes = ["WPA", "WEP", "nopass"] as const;
 type WifiType = (typeof validWifiTypes)[number];
 

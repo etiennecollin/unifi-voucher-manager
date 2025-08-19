@@ -3,10 +3,12 @@
 import Spinner from "@/components/utils/Spinner";
 import VoucherCard from "@/components/VoucherCard";
 import VoucherModal from "@/components/modals/VoucherModal";
+import { PrintMode } from "@/app/print/page";
 import { Voucher } from "@/types/voucher";
 import { api } from "@/utils/api";
 import { notify } from "@/utils/notifications";
 import { useMemo, useEffect, useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function VouchersTab() {
   const [loading, setLoading] = useState(true);
@@ -14,8 +16,28 @@ export default function VouchersTab() {
   const [viewVoucher, setViewVoucher] = useState<Voucher | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [editMode, setEditMode] = useState(false);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
+  const router = useRouter();
+
+  const filteredVouchers = useMemo(() => {
+    if (!searchQuery.trim()) return vouchers;
+
+    const query = searchQuery.toLowerCase().trim();
+    return vouchers.filter((voucher) =>
+      voucher.name?.toLowerCase().includes(query),
+    );
+  }, [vouchers, searchQuery]);
+
+  const expiredIds = useMemo(
+    () => filteredVouchers.filter((v) => v.expired).map((v) => v.id),
+    [filteredVouchers],
+  );
+
+  const selectedVouchers = useMemo(
+    () => filteredVouchers.filter((v) => selectedIds.has(v.id)),
+    [filteredVouchers, selectedIds],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -28,15 +50,70 @@ export default function VouchersTab() {
     setLoading(false);
   }, []);
 
-  const startEdit = () => {
-    setSelected(new Set());
+  const startEdit = useCallback(() => {
+    setSelectedIds(new Set());
     setEditMode(true);
-  };
+  }, []);
 
   const cancelEdit = useCallback(() => {
-    setSelected(new Set());
+    setSelectedIds(new Set());
     setEditMode(false);
   }, []);
+
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds((p) => {
+      const s = new Set(p);
+      s.has(id) ? s.delete(id) : s.add(id);
+      return s;
+    });
+  }, []);
+
+  const clickCard = useCallback(
+    (v: Voucher) => (editMode ? toggleSelect(v.id) : setViewVoucher(v)),
+    [editMode, toggleSelect, setViewVoucher],
+  );
+
+  const selectAll = () => {
+    if (selectedVouchers.length === filteredVouchers.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredVouchers.map((v) => v.id)));
+    }
+  };
+
+  const closeModal = useCallback(() => {
+    setViewVoucher(null);
+  }, []);
+
+  const deleteVouchers = useCallback(
+    async (kind: "selected" | "expired") => {
+      setBusy(true);
+      const kind_word = kind === "selected" ? "" : "expired";
+
+      try {
+        const res =
+          kind === "selected"
+            ? await api.deleteSelected([...selectedVouchers.map((v) => v.id)])
+            : await api.deleteSelected([...expiredIds]);
+
+        const count = res.vouchersDeleted || 0;
+        if (count > 0) {
+          notify(
+            `Successfully deleted ${count} ${kind_word} voucher${count === 1 ? "" : "s"}`,
+            "success",
+          );
+          setSelectedIds(new Set());
+        } else {
+          notify(`No ${kind_word} vouchers were deleted`, "info");
+        }
+      } catch {
+        notify(`Failed to delete ${kind_word} vouchers`, "error");
+      }
+      setBusy(false);
+      cancelEdit();
+    },
+    [selectedVouchers, expiredIds, cancelEdit],
+  );
 
   useEffect(() => {
     load();
@@ -53,66 +130,13 @@ export default function VouchersTab() {
     };
   }, [load, cancelEdit]);
 
-  const filteredVouchers = useMemo(() => {
-    if (!searchQuery.trim()) return vouchers;
+  const handlePrintClick = (mode: PrintMode) => {
+    // Prepare the data for the URL
+    const vouchersParam = encodeURIComponent(JSON.stringify(vouchers));
+    const printUrl = `/print?vouchers=${vouchersParam}&mode=${mode}`;
 
-    const query = searchQuery.toLowerCase().trim();
-    return vouchers.filter((voucher) =>
-      voucher.name?.toLowerCase().includes(query),
-    );
-  }, [vouchers, searchQuery]);
-
-  const expiredVouchers = useMemo(
-    () => filteredVouchers.filter((v) => v.expired).map((v) => v.id),
-    [filteredVouchers],
-  );
-
-  const toggleSelect = useCallback((id: string) => {
-    setSelected((p) => {
-      const s = new Set(p);
-      s.has(id) ? s.delete(id) : s.add(id);
-      return s;
-    });
-  }, []);
-
-  const selectAll = () => {
-    if (selected.size === filteredVouchers.length) {
-      setSelected(new Set());
-    } else {
-      setSelected(new Set(filteredVouchers.map((v) => v.id)));
-    }
+    router.replace(printUrl);
   };
-
-  const closeModal = useCallback(() => {
-    setViewVoucher(null);
-  }, []);
-
-  const deleteVouchers = useCallback(
-    async (kind: "selected" | "expired") => {
-      setBusy(true);
-      const kind_word = kind === "selected" ? "" : "expired";
-      try {
-        const res =
-          kind === "selected"
-            ? await api.deleteSelected([...selected])
-            : await api.deleteSelected([...expiredVouchers]);
-        const count = res.vouchersDeleted || 0;
-        if (count > 0) {
-          notify(
-            `Successfully deleted ${count} ${kind_word} voucher${count === 1 ? "" : "s"}`,
-            "success",
-          );
-          setSelected(new Set());
-        } else {
-          notify(`No ${kind_word} vouchers were deleted`, "info");
-        }
-      } catch {
-        notify(`Failed to delete ${kind_word} vouchers`, "error");
-      }
-      setBusy(false);
-    },
-    [selected],
-  );
 
   return (
     <div className="flex-1">
@@ -149,30 +173,44 @@ export default function VouchersTab() {
             <button
               onClick={selectAll}
               disabled={!filteredVouchers.length}
-              className="btn-secondary"
+              className="btn-primary"
             >
               Select All
             </button>
             <button
+              onClick={() => handlePrintClick("grid")}
+              disabled={!selectedVouchers.length}
+              className="btn-secondary"
+            >
+              Print (Tile)
+            </button>
+            <button
+              onClick={() => handlePrintClick("list")}
+              disabled={!selectedVouchers.length}
+              className="btn-secondary"
+            >
+              Print (List)
+            </button>
+            <button
               onClick={() => deleteVouchers("selected")}
-              disabled={busy || !selected.size}
+              disabled={busy || !selectedVouchers.length}
               className="btn-danger"
             >
               Delete Selected
             </button>
             <button
               onClick={() => deleteVouchers("expired")}
-              disabled={busy || !expiredVouchers.length}
+              disabled={busy || !expiredIds.length}
               className="btn-warning"
             >
               Delete Expired
             </button>
-            <button onClick={cancelEdit} className="btn-secondary">
+            <button onClick={cancelEdit} className="btn-primary">
               Cancel
             </button>
             {busy ? <Spinner /> : <></>}
             <span className="text-sm text-secondary font-bold ml-auto">
-              {selected.size} selected
+              {selectedVouchers.length} selected
             </span>
           </>
         )}
@@ -199,10 +237,8 @@ export default function VouchersTab() {
               key={v.id}
               voucher={v}
               editMode={editMode}
-              selected={selected.has(v.id)}
-              onClick={() =>
-                editMode ? toggleSelect(v.id) : setViewVoucher(v)
-              }
+              selected={selectedVouchers.includes(v)}
+              onClick={clickCard}
             />
           ))}
         </div>

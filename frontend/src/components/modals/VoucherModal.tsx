@@ -46,8 +46,6 @@ export default function VoucherModal({ voucher, onClose }: Props) {
     })();
   }, [voucher.id]);
 
-  const rawCode = details?.code ?? voucher.code;
-
   return (
     <Modal onClose={onClose}>
       <VoucherCode voucher={voucher} contentClassName="mb-8" />
