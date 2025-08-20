@@ -2,13 +2,16 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
-assignees: ''
+labels: bug
+assignees: etiennecollin
 
 ---
 
 ## Describe the bug
 A clear and concise description of what the bug is.
+
+## Expected behavior
+A clear and concise description of what you expected to happen.
 
 ## Logs
 ```
@@ -39,9 +42,6 @@ VAR2="b"
 - Browser [e.g. chrome, safari, firefox]
 - Version [e.g. 1.2.1]
 - Using docker image or bare-metal?
-
-## Expected behavior
-A clear and concise description of what you expected to happen.
 
 ## Screenshots
 If applicable, add screenshots to help explain your problem.
