@@ -1,57 +1,14 @@
-"use client";
+import { useGlobal } from "@/contexts/GlobalContext";
 
-import { useEffect, useState } from "react";
+export type Theme = "system" | "light" | "dark";
 
 export default function ThemeSwitcher() {
-  type themeType = "system" | "light" | "dark";
-  const [theme, setTheme] = useState<themeType>("system");
-
-  // Load saved theme
-  useEffect(() => {
-    const stored = localStorage.getItem("theme") as themeType | null;
-    setTheme(stored || "system");
-  }, []);
-
-  // Apply theme class
-  useEffect(() => {
-    const html = document.documentElement;
-    const mql = window.matchMedia("(prefers-color-scheme: dark)");
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-    const apply = () => {
-      // Only disable transitions on Safari
-      if (isSafari) {
-        html.classList.add("transition-disabled");
-      }
-
-      const isDark = theme === "dark" || (theme === "system" && mql.matches);
-      html.classList.toggle("dark", isDark);
-      localStorage.setItem("theme", theme);
-
-      // Re-enable transitions after a brief delay on Safari
-      if (isSafari) {
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            html.classList.remove("transition-disabled");
-          }, 150);
-        });
-      }
-    };
-
-    apply();
-
-    // For system mode, listen to changes
-    mql.addEventListener("change", apply);
-
-    return () => {
-      mql.removeEventListener("change", apply);
-    };
-  }, [theme]);
+  const { theme, setTheme } = useGlobal();
 
   return (
     <select
       value={theme}
-      onChange={(e) => setTheme(e.target.value as any)}
+      onChange={(e) => setTheme(e.target.value as Theme)}
       className="text-sm"
     >
       <option value="system">⚙️ System</option>

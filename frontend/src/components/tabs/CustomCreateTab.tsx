@@ -1,7 +1,7 @@
 "use client";
 
 import SuccessModal from "@/components/modals/SuccessModal";
-import { VoucherCreateData } from "@/types/voucher";
+import { Voucher, VoucherCreateData } from "@/types/voucher";
 import { api } from "@/utils/api";
 import { map } from "@/utils/functional";
 import { notify } from "@/utils/notifications";
@@ -9,7 +9,7 @@ import { useCallback, useState, FormEvent } from "react";
 
 export default function CustomCreateTab() {
   const [loading, setLoading] = useState(false);
-  const [newCode, setNewCode] = useState<string | null>(null);
+  const [newVoucher, setNewVoucher] = useState<Voucher | null>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,12 +33,15 @@ export default function CustomCreateTab() {
 
     try {
       const res = await api.createVoucher(payload);
-      const code = res.vouchers?.[0]?.code;
-      if (code) {
-        setNewCode(code);
+      const voucher = res.vouchers?.[0];
+      if (voucher) {
+        setNewVoucher(voucher);
         form.reset();
       } else {
-        notify("Voucher created, but code not found in response", "warning");
+        notify(
+          "Voucher created, but its data was found in response",
+          "warning",
+        );
       }
     } catch {
       notify("Failed to create voucher", "error");
@@ -47,7 +50,7 @@ export default function CustomCreateTab() {
   };
 
   const closeModal = useCallback(() => {
-    setNewCode(null);
+    setNewVoucher(null);
   }, []);
 
   return (
@@ -106,7 +109,7 @@ export default function CustomCreateTab() {
           {loading ? "Creating…" : "Create Custom Voucher"}
         </button>
       </form>
-      {newCode && <SuccessModal code={newCode} onClose={closeModal} />}
+      {newVoucher && <SuccessModal voucher={newVoucher} onClose={closeModal} />}
     </div>
   );
 }

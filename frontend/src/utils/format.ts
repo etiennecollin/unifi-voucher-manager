@@ -2,6 +2,10 @@ export function formatCode(code: string) {
   return code.length === 10 ? code.replace(/(.{5})(.{5})/, "$1-$2") : code;
 }
 
+export function formatMaxGuests(maxGuests: number | null | undefined) {
+  return !maxGuests ? "Unlimited" : Math.max(maxGuests, 0);
+}
+
 export function formatDuration(m: number | null | undefined) {
   if (!m) return "Unlimited";
   const days = Math.floor(m / 1440),

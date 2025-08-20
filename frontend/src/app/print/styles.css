@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* Print page settings */
+@media print {
+  @page {
+    size: auto;
+    margin: 4; /* ~3mm is too fine; browsers usually round to ~4px */
+  }
+  html,
+  body {
+    overflow: visible !important;
+    height: auto !important;
+    width: auto !important;
+    position: static !important;
+    touch-action: auto !important;
+    background: white !important;
+    color: black !important;
+  }
+}
+
+.print-wrapper {
+  @apply p-3 m-0 p-0 bg-white text-black font-mono text-sm leading-snug;
+}
+
+.print-list {
+  @apply flex flex-col gap-3 max-w-[80mm] mx-auto;
+}
+.print-grid {
+  @apply grid gap-3 grid-cols-[repeat(auto-fill,minmax(250px,1fr))];
+}
+
+.print-voucher {
+  @apply border-2 border-black p-3;
+}
+
+.print-header {
+  @apply text-center border-b-2 border-black pb-1;
+}
+.print-title {
+  @apply font-bold text-lg;
+}
+
+.print-voucher-code {
+  @apply text-xl font-bold text-center border-2 border-black p-1 my-3;
+}
+
+.print-info-row {
+  @apply flex justify-between my-1.5 border-b border-dotted border-black;
+}
+.print-label {
+  @apply font-bold flex-1;
+}
+.print-value {
+  @apply flex-1 text-right;
+}
+
+.print-qr-section {
+  @apply flex flex-col items-center justify-center my-3 border-t-2 border-black pt-2;
+}
+.print-qr-section .print-qr-text {
+  @apply text-center text-xs mt-2;
+}
+
+/* Footer */
+.print-footer {
+  @apply text-left border-t-2 border-black pt-2 text-xs;
+}

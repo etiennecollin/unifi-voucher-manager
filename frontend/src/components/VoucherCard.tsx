@@ -1,22 +1,26 @@
 import { Voucher } from "@/types/voucher";
 import { formatCode, formatDuration, formatGuestUsage } from "@/utils/format";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 
 type Props = {
   voucher: Voucher;
   selected: boolean;
   editMode: boolean;
-  onClick?: () => void;
+  onClick?: (v: Voucher) => void;
 };
 
 const VoucherCard = ({ voucher, selected, editMode, onClick }: Props) => {
   const statusClass = voucher.expired
     ? "bg-status-danger text-status-danger"
     : "bg-status-success text-status-success";
+  const onClickHandler = useCallback(
+    () => onClick?.(voucher),
+    [voucher, onClick],
+  );
 
   return (
     <div
-      onClick={onClick}
+      onClick={onClickHandler}
       className={`card card-interactive
         ${selected ? "border-accent" : ""}
         ${editMode ? "relative" : ""}`}
