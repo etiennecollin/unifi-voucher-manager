@@ -1,3 +1,4 @@
+use axum::http::HeaderValue;
 use chrono::DateTime;
 use chrono_tz::Tz;
 use reqwest::{Client, ClientBuilder, StatusCode};
@@ -32,20 +33,18 @@ pub struct UnifiAPI<'a> {
 }
 
 impl<'a> UnifiAPI<'a> {
-    pub async fn new() -> Result<Self, ()> {
+    pub async fn try_new() -> Result<Self, String> {
         let environment: &Environment = ENVIRONMENT.get().expect("Environment not set");
 
         let mut headers = reqwest::header::HeaderMap::with_capacity(2);
         headers.insert(
             reqwest::header::CONTENT_TYPE,
-            reqwest::header::HeaderValue::from_static("application/json"),
+            HeaderValue::from_static("application/json"),
         );
         headers.insert(
             "X-API-Key",
-            environment
-                .unifi_api_key
-                .parse()
-                .expect("Could not parse API Key"),
+            HeaderValue::from_str(&environment.unifi_api_key)
+                .map_err(|e| format!("Failed to set X-API-Key header: {e}"))?,
         );
 
         let client = ClientBuilder::new()
@@ -70,8 +69,7 @@ impl<'a> UnifiAPI<'a> {
                 let id = match unifi_api.get_default_site_id().await {
                     Ok(id) => id,
                     Err(e) => {
-                        error!("Failed to fetch default site ID: {}", e);
-                        return Err(());
+                        return Err(format!("Failed to fetch default site ID: {e}"));
                     }
                 };
                 info!("Default site ID found: {}", id);

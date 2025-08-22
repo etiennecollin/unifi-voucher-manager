@@ -53,13 +53,9 @@ impl Environment {
         };
 
         let unifi_has_valid_cert: bool = match env::var("UNIFI_HAS_VALID_CERT") {
-            Ok(val) => match val.trim().to_lowercase().as_str() {
-                "true" | "1" | "yes" => true,
-                "false" | "0" | "no" => false,
-                _ => {
-                    return Err("Invalid UNIFI_HAS_VALID_CERT, must be true/false".to_string());
-                }
-            },
+            Ok(val) => {
+                Self::parse_bool(&val).map_err(|e| format!("Invalid UNIFI_HAS_VALID_CERT: {e}"))?
+            }
             Err(_) => true,
         };
 
@@ -89,5 +85,13 @@ impl Environment {
             unifi_has_valid_cert,
             timezone,
         })
+    }
+
+    fn parse_bool(s: &str) -> Result<bool, String> {
+        match s.trim().to_lowercase().as_str() {
+            "true" | "1" | "yes" => Ok(true),
+            "false" | "0" | "no" => Ok(false),
+            _ => Err(format!("Boolean value must be true or false, found: {s}")),
+        }
     }
 }

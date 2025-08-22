@@ -9,7 +9,7 @@ use backend::{
     unifi_api::{UNIFI_API, UnifiAPI},
 };
 use tower_http::cors::{Any, CorsLayer};
-use tracing::{error, info, level_filters::LevelFilter};
+use tracing::{error, info, level_filters::LevelFilter, warn};
 use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
@@ -35,14 +35,20 @@ async fn main() {
         .set(env)
         .expect("Failed to set environment variables");
 
-    let unifi_api = match UnifiAPI::new().await {
-        Ok(api) => api,
-        Err(_) => {
-            error!("Failed to initialize UnifiAPI wrapper");
-            std::process::exit(1);
+    loop {
+        match UnifiAPI::try_new().await {
+            Ok(api) => {
+                UNIFI_API.set(api).expect("Failed to set UnifiAPI");
+                info!("Successfully connected to Unifi controller");
+                break;
+            }
+            Err(e) => {
+                error!("Failed to initialize UnifiAPI wrapper: {}", e);
+                warn!("Retrying connection in 5 seconds...");
+                tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+            }
         }
-    };
-    UNIFI_API.set(unifi_api).expect("Failed to set UnifiAPI");
+    }
 
     let cors = CorsLayer::new()
         .allow_headers([http::header::CONTENT_TYPE])
