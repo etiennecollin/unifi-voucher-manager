@@ -1,8 +1,8 @@
 # ==============================================================================
 # Base images
 # ==============================================================================
-FROM node:24.3-alpine AS node-base
-FROM rust:1.88-alpine AS rust-base
+FROM node:26.1-alpine AS node-base
+FROM rust:1.95-alpine AS rust-base
 
 # ==============================================================================
 # Backend dependencies
