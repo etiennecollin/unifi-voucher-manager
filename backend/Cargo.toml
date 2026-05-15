@@ -4,19 +4,19 @@ version = "0.0.0-git"
 edition = "2024"
 
 [dependencies]
-axum = "0.8.8"
-chrono = { version = "0.4.42" }
+axum = "0.8.9"
+chrono = { version = "0.4.44" }
 chrono-tz = "0.10.4"
 dotenvy = { version = "0.15.7", optional = true }
 percent-encoding = "2.3.2"
-reqwest = { version = "0.13.1", features = ["json"] }
+reqwest = { version = "0.13.3", features = ["json"] }
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.148"
-tokio = { version = "1.48.0", features = ["full"] }
-tower = "0.5.2" # Remove??
-tower-http = { version = "0.6.8", features = ["cors"] }
+serde_json = "1.0.149"
+tokio = { version = "1.52.3", features = ["full"] }
+tower = "0.5.3" # Remove??
+tower-http = { version = "0.6.10", features = ["cors"] }
 tracing = "0.1.44"
-tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
 [profile.release]
 opt-level = "z"
