@@ -132,7 +132,7 @@ export default function VouchersTab() {
 
   const handlePrintClick = (mode: PrintMode) => {
     // Prepare the data for the URL
-    const vouchersParam = encodeURIComponent(JSON.stringify(vouchers));
+    const vouchersParam = encodeURIComponent(JSON.stringify(selectedVouchers));
     const printUrl = `/print?vouchers=${vouchersParam}&mode=${mode}`;
 
     router.replace(printUrl);
