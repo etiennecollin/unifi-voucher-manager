@@ -93,7 +93,9 @@ export default function VouchersTab() {
       try {
         const res =
           kind === "selected"
-            ? await api.deleteSelectedVouchers([...selectedVouchers.map((v) => v.id)])
+            ? await api.deleteSelectedVouchers([
+                ...selectedVouchers.map((v) => v.id),
+              ])
             : await api.deleteSelectedVouchers([...expiredIds]);
 
         const count = res.vouchersDeleted || 0;
@@ -132,7 +134,7 @@ export default function VouchersTab() {
 
   const handlePrintClick = (mode: PrintMode) => {
     // Prepare the data for the URL
-    const vouchersParam = encodeURIComponent(JSON.stringify(vouchers));
+    const vouchersParam = encodeURIComponent(JSON.stringify(selectedVouchers));
     const printUrl = `/print?vouchers=${vouchersParam}&mode=${mode}`;
 
     router.replace(printUrl);
