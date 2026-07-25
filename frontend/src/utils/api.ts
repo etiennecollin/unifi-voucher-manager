@@ -31,10 +31,10 @@ export const MIN_VOUCHER_DURATION_MINUTES = 1;
 export const MAX_VOUCHER_DURATION_MINUTES = 525_600;
 
 export const MIN_VOUCHER_COUNT = 1;
-export const MAX_VOUCHER_COUNT = 10;
+export const MAX_VOUCHER_COUNT = 1000;
 
 export const MIN_VOUCHER_GUESTS = 1;
-export const MAX_VOUCHER_GUESTS = 5;
+export const MAX_VOUCHER_GUESTS = 1000;
 
 export const MIN_VOUCHER_DATA_MB = 1;
 export const MAX_VOUCHER_DATA_MB = 1_048_576;
