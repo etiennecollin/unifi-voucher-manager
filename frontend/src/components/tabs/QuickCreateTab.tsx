@@ -67,7 +67,9 @@ export default function QuickCreateTab() {
         </button>
       </form>
 
-      {newVoucher && <SuccessModal voucher={newVoucher} onClose={closeModal} />}
+      {newVoucher && (
+        <SuccessModal vouchers={[newVoucher]} onClose={closeModal} />
+      )}
     </div>
   );
 }
