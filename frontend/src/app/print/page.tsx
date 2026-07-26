@@ -2,7 +2,7 @@
 
 import "./styles.css";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Voucher } from "@/types/voucher";
 import {
@@ -15,6 +15,7 @@ import { useGlobal } from "@/contexts/GlobalContext";
 import { formatCode } from "@/utils/format";
 import Spinner from "@/components/utils/Spinner";
 import { PrintMode } from "@/types/print";
+import { TriState } from "@/types/state";
 
 // This component represents a single voucher card to be printed
 function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
@@ -106,22 +107,25 @@ function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
 function Vouchers() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [state, setState] = useState<TriState | null>("loading");
 
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [mode, setMode] = useState<PrintMode>("list");
   const [batchId, setBatchId] = useState<string | null>(null);
 
-  const hasPrinted = useRef(false);
-
   // Load print job
   useEffect(() => {
+    setState("loading");
+
     const id = searchParams.get("batchId");
     if (!id) {
+      setState("error");
       return;
     }
 
     const stored = localStorage.getItem(`print-job-${id}`);
     if (!stored) {
+      setState("error");
       return;
     }
 
@@ -131,18 +135,18 @@ function Vouchers() {
       setVouchers(storedVouchers as Voucher[]);
       setMode((storedMode as PrintMode) || "list");
       setBatchId(id);
+      setState("ok");
     } catch (error) {
       console.error("Failed to load print job:", error);
+      setState("error");
     }
   }, [searchParams]);
 
   // Print once vouchers exist
   useEffect(() => {
-    if (!vouchers.length || !batchId || hasPrinted.current) {
+    if (!vouchers.length || !batchId) {
       return;
     }
-
-    hasPrinted.current = true;
 
     const handleAfterPrint = () => {
       localStorage.removeItem(`print-job-${batchId}`);
@@ -158,12 +162,23 @@ function Vouchers() {
       clearTimeout(timer);
       window.removeEventListener("afterprint", handleAfterPrint);
     };
-  }, [vouchers, batchId, router]);
+  }, [vouchers, batchId]);
+
+  const emptyMessage = (() => {
+    switch (state) {
+      case "loading":
+        return "Loading vouchers... please wait...";
+      case "ok":
+        return "No vouchers to print, press escape or backspace.";
+      case "error":
+        return "An error occurred, press escape or backspace.";
+      default:
+        return "An error occurred, press escape or backspace.";
+    }
+  })();
 
   return !vouchers.length ? (
-    <div style={{ textAlign: "center" }}>
-      No vouchers to print, press escape or backspace.
-    </div>
+    <div style={{ textAlign: "center" }}>{emptyMessage}</div>
   ) : (
     <div className={mode === "grid" ? "print-grid" : "print-list"}>
       {vouchers.map((v) => (
