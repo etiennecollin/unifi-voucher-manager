@@ -228,7 +228,10 @@ impl<'a> UnifiAPI<'a> {
         let rolling = response
             .data
             .iter()
-            .filter(|voucher| voucher.name.starts_with(ROLLING_VOUCHER_NAME_PREFIX) && voucher.activated_at.is_none())
+            .filter(|voucher| {
+                voucher.name.starts_with(ROLLING_VOUCHER_NAME_PREFIX)
+                    && voucher.activated_at.is_none()
+            })
             .max_by_key(|voucher| {
                 DateTime::parse_from_str(&voucher.created_at, DATE_TIME_FORMAT)
                     .unwrap_or_else(|_| DateTime::UNIX_EPOCH.fixed_offset())

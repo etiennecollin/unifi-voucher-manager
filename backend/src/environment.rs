@@ -17,6 +17,7 @@ pub struct Environment {
     pub unifi_api_key: String,
     pub backend_bind_host: String,
     pub backend_bind_port: u16,
+    pub purge_all_expired_vouchers: bool,
     pub rolling_voucher_duration_minutes: u64,
     pub unifi_has_valid_cert: bool,
     pub timezone: Tz,
@@ -57,6 +58,12 @@ impl Environment {
             Err(_) => DEEFAULT_ROLLING_VOUCHER_DURATION_MINUTES,
         };
 
+        let purge_all_expired_vouchers: bool = match env::var("PURGE_ALL_EXPIRED_VOUCHERS") {
+            Ok(val) => Self::parse_bool(&val)
+                .map_err(|e| format!("Invalid PURGE_ALL_EXPIRED_VOUCHERS: {e}"))?,
+            Err(_) => false,
+        };
+
         let unifi_has_valid_cert: bool = match env::var("UNIFI_HAS_VALID_CERT") {
             Ok(val) => {
                 Self::parse_bool(&val).map_err(|e| format!("Invalid UNIFI_HAS_VALID_CERT: {e}"))?
@@ -88,6 +95,7 @@ impl Environment {
             backend_bind_host,
             backend_bind_port,
             rolling_voucher_duration_minutes,
+            purge_all_expired_vouchers,
             unifi_has_valid_cert,
             timezone,
         })
