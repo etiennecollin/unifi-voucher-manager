@@ -25,14 +25,17 @@ export const GlobalProvider = ({
   wifiConfig,
   wifiString,
 }: GlobalProviderProps) => {
-  const [theme, setTheme] = useState<Theme>("system");
-  useServerEvents();
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "system";
+    const stored = localStorage.getItem("theme");
 
-  // Load theme on mount
-  useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    if (stored) setTheme(stored);
-  }, []);
+    if (stored === "light" || stored === "dark" || stored === "system") {
+      return stored;
+    }
+
+    return "system";
+  });
+  useServerEvents();
 
   // Apply theme when changed
   useEffect(() => {
