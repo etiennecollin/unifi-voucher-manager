@@ -275,3 +275,5 @@ Make sure to configure the required variables. The optional variables generally 
 ---
 
 **⭐ If this project helped you, please consider giving it a star!**
+
+Disclaimer: This is an independent, unofficial project. It is not affiliated with, endorsed by, or sponsored by Ubiquiti Inc. UniFi, Ubiquiti, and all associated trademarks, logos, and intellectual property are the property of Ubiquiti Inc. Their use in this project is for identification and compatibility purposes only.

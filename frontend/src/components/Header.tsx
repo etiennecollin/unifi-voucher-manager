@@ -16,15 +16,6 @@ export default function Header() {
     () => !!(wifiConfig && wifiString),
     [wifiConfig, wifiString],
   );
-  const [hasLogo, setHasLogo] = useState(false);
-
-  const LOGO_PATH = "/logo.svg";
-
-  useEffect(() => {
-    fetch(LOGO_PATH, { method: "HEAD" })
-      .then((res) => setHasLogo(res.ok))
-      .catch(() => setHasLogo(false));
-  }, []);
 
   useEffect(() => {
     // Set initial height and update on resize
@@ -49,15 +40,13 @@ export default function Header() {
     >
       <div className="max-w-95/100 mx-auto flex-center-between px-4 py-4 gap-4">
         <div className="flex-center gap-3">
-          {hasLogo && (
-            <Image
-              src={LOGO_PATH}
-              width={45}
-              height={45}
-              alt="UniFi Voucher Manager logo"
-              className="dark:invert shrink-0"
-            />
-          )}
+          <Image
+            src="/logo.svg"
+            width={35}
+            height={35}
+            alt="UniFi Voucher Manager logo"
+            className="dark:invert shrink-0"
+          />
           <h1 className="text-xl md:text-2xl font-semibold text-brand">
             <span className="block sm:hidden">UVM</span>
             <span className="hidden sm:block">UniFi Voucher Manager</span>

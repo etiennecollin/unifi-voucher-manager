@@ -10,7 +10,7 @@ type Props = {
   sizeRatio?: number;
   /** Fixed size override (in px). If provided, this takes precedence over automatic sizing. */
   overrideSize?: number;
-  /** URL for the logo inside the QR. Default uses /unifi.svg like the original. */
+  /** URL for the logo inside the QR. Default uses /logo.svg. */
   imageSrc?: string;
 };
 
@@ -18,7 +18,7 @@ export default function WifiQr({
   className,
   sizeRatio = 0.8,
   overrideSize,
-  imageSrc = "/unifi.svg",
+  imageSrc = "/logo.svg",
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [qrSize, setQrSize] = useState<number>(220);
