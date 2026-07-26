@@ -7,8 +7,22 @@ use tracing::{debug, error, info};
 
 use crate::{models::*, unifi_api::UNIFI_API};
 
-pub async fn get_vouchers_handler() -> Result<Json<GetVouchersResponse>, StatusCode> {
+pub async fn get_vouchers_filtered_handler(
+    Query(params): Query<VouchersGetRequest>,
+) -> Result<Json<VouchersGetResponse>, StatusCode> {
     debug!("Received request to get vouchers");
+    let client = UNIFI_API.get().expect("UnifiAPI not initialized");
+    match client.get_vouchers(&params).await {
+        Ok(response) => Ok(Json(response)),
+        Err(e) => {
+            error!("Failed to get vouchers: {}", e);
+            Err(e)
+        }
+    }
+}
+
+pub async fn get_all_vouchers_handler() -> Result<Json<VouchersGetResponse>, StatusCode> {
+    debug!("Received request to get all vouchers");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
     match client.get_all_vouchers().await {
         Ok(response) => Ok(Json(response)),
@@ -45,7 +59,7 @@ pub async fn get_newest_voucher_handler() -> Result<Json<Voucher>, StatusCode> {
 }
 
 pub async fn get_voucher_details_handler(
-    Query(params): Query<DetailsRequest>,
+    Query(params): Query<VoucherDetailsRequest>,
 ) -> Result<Json<Voucher>, StatusCode> {
     debug!("Received request to get voucher details");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
@@ -59,8 +73,8 @@ pub async fn get_voucher_details_handler(
 }
 
 pub async fn create_voucher_handler(
-    Json(request): Json<CreateVoucherRequest>,
-) -> Result<Json<CreateVoucherResponse>, StatusCode> {
+    Json(request): Json<VouchersCreateRequest>,
+) -> Result<Json<VouchersCreateResponse>, StatusCode> {
     debug!("Received request to create voucher");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
     match client.create_voucher(&request).await {
@@ -105,7 +119,7 @@ pub async fn create_rolling_voucher_handler(
 }
 
 pub async fn delete_selected_handler(
-    Query(params): Query<DeleteRequest>,
+    Query(params): Query<VouchersDeleteRequest>,
 ) -> Result<Json<DeleteResponse>, StatusCode> {
     debug!("Received request to delete selected vouchers");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");

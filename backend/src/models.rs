@@ -29,7 +29,7 @@ pub struct Voucher {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CreateVoucherRequest {
+pub struct VouchersCreateRequest {
     pub count: u32,
     pub name: String,
     #[serde(rename = "authorizedGuestLimit")]
@@ -45,13 +45,18 @@ pub struct CreateVoucherRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CreateVoucherResponse {
+pub struct VouchersCreateResponse {
     #[serde(alias = "data")]
     pub vouchers: Vec<Voucher>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct GetVouchersResponse {
+pub struct VouchersGetResponse {
+    pub offset: u64,
+    pub limit: u32,
+    pub count: u32,
+    #[serde(rename = "totalCount")]
+    pub total_count: u64,
     pub data: Vec<Voucher>,
 }
 
@@ -66,13 +71,20 @@ pub struct HealthCheckResponse {
     pub status: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct VouchersGetRequest {
+    pub offset: u32,
+    pub limit: u32,
+    pub filter: Option<String>,
+}
+
 #[derive(Debug, Deserialize)]
-pub struct DeleteRequest {
+pub struct VouchersDeleteRequest {
     pub ids: String,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct DetailsRequest {
+pub struct VoucherDetailsRequest {
     pub id: String,
 }
 
@@ -97,7 +109,7 @@ pub struct GetSitesResponse {
 #[derive(Debug, Deserialize)]
 pub struct ErrorResponse {
     #[serde(rename = "statusCode")]
-    pub status_code: u32,
+    pub status_code: i32,
     #[serde(rename = "statusName")]
     pub status_name: String,
     pub message: String,

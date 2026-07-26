@@ -3,6 +3,7 @@ import {
   VoucherCreateData,
   VoucherCreatedResponse,
   VoucherDeletedResponse,
+  VoucherGetResponse,
 } from "@/types/voucher";
 import { notifyVouchersUpdated } from "./actions";
 
@@ -46,7 +47,7 @@ export const MIN_VOUCHER_UPLOAD_KBPS = 2;
 export const MAX_VOUCHER_UPLOAD_KBPS = 100_000;
 
 export const api = {
-  getAllVouchers: () => call<{ data: Voucher[] }>("/vouchers"),
+  getAllVouchers: () => call<VoucherGetResponse>("/vouchers"),
 
   getRollingVoucher: () => call<Voucher>("/vouchers/rolling"),
 
