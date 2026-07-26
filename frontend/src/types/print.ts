@@ -9,11 +9,11 @@ export type PrintJob = {
 };
 
 export type PrintConfig = {
-  duration: boolean;
-  maxGuests: boolean;
-  dataUsageLimit: boolean;
-  rxRateLimit: boolean;
-  txRateLimit: boolean;
-  id: boolean;
-  printTime: boolean;
+  showDuration: boolean;
+  showMaxGuests: boolean;
+  showDataUsageLimit: boolean;
+  showRxRateLimit: boolean;
+  showTxRateLimit: boolean;
+  showId: boolean;
+  showPrintTime: boolean;
 };

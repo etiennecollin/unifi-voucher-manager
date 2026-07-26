@@ -31,29 +31,29 @@ function VoucherPrintCard({
     {
       label: "Duration",
       value: formatDuration(voucher.timeLimitMinutes),
-      enabled: config.duration,
+      enabled: config.showDuration,
     },
     {
       label: "Max Guests",
       value: formatMaxGuests(voucher.authorizedGuestLimit),
-      enabled: config.maxGuests,
+      enabled: config.showMaxGuests,
     },
     {
       label: "Data Limit",
       value: voucher.dataUsageLimitMBytes
         ? formatBytes(voucher.dataUsageLimitMBytes * 1024 * 1024)
         : "Unlimited",
-      enabled: config.dataUsageLimit,
+      enabled: config.showDataUsageLimit,
     },
     {
       label: "Down Speed",
       value: formatSpeed(voucher.rxRateLimitKbps),
-      enabled: config.rxRateLimit,
+      enabled: config.showRxRateLimit,
     },
     {
       label: "Up Speed",
       value: formatSpeed(voucher.txRateLimitKbps),
-      enabled: config.txRateLimit,
+      enabled: config.showTxRateLimit,
     },
   ];
 
@@ -101,14 +101,14 @@ function VoucherPrintCard({
         </div>
       )}
 
-      {(config.id || config.printTime) && (
+      {(config.showId || config.showPrintTime) && (
         <div className="print-footer">
-          {config.id && (
+          {config.showId && (
             <div>
               <strong className="text-sm">ID:</strong> {voucher.id}
             </div>
           )}
-          {config.printTime && (
+          {config.showPrintTime && (
             <div>
               <strong className="text-sm">Printed:</strong>{" "}
               {new Date().toUTCString()}
