@@ -2,11 +2,7 @@
 
 import { Theme } from "@/components/utils/ThemeSwitcher";
 import { useServerEvents } from "@/hooks/useServerEvents";
-import {
-  generateWifiConfig,
-  generateWiFiQRString,
-  WifiConfig,
-} from "@/utils/wifi";
+import { WifiConfig } from "@/utils/wifi";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type GlobalContextType = {
@@ -18,25 +14,19 @@ type GlobalContextType = {
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
-export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
+type GlobalProviderProps = {
+  children: React.ReactNode;
+  wifiConfig: WifiConfig | null;
+  wifiString: string | null;
+};
+
+export const GlobalProvider = ({
   children,
-}) => {
-  const [wifiConfig, setWifiConfig] = useState<WifiConfig | null>(null);
-  const [wifiString, setWifiString] = useState<string | null>(null);
+  wifiConfig,
+  wifiString,
+}: GlobalProviderProps) => {
   const [theme, setTheme] = useState<Theme>("system");
   useServerEvents();
-
-  // WiFi setup
-  useEffect(() => {
-    try {
-      const cfg = generateWifiConfig();
-      const str = cfg ? generateWiFiQRString(cfg) : null;
-      setWifiConfig(cfg);
-      setWifiString(str);
-    } catch (e) {
-      console.warn(`Could not generate WiFi configuration: ${e}`);
-    }
-  }, []);
 
   // Load theme on mount
   useEffect(() => {
