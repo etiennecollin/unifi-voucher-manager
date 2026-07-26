@@ -18,7 +18,7 @@ import {
 } from "@/utils/api";
 import { map } from "@/utils/functional";
 import { notify } from "@/utils/notifications";
-import { useCallback, useState, FormEvent } from "react";
+import { useCallback, useState, SubmitEvent } from "react";
 
 type TimeUnit = "minutes" | "hours" | "days";
 
@@ -27,14 +27,14 @@ export default function CustomCreateTab() {
   const [newVoucher, setNewVoucher] = useState<Voucher | null>(null);
   const [durationUnit, setDurationUnit] = useState<TimeUnit>("minutes");
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
 
     const parseNumber = (x: FormDataEntryValue) =>
       x !== "" ? Number(x) : null;
 
-    const form = e.currentTarget;
+    const form = e.currentTarget as HTMLFormElement;
     const data = new FormData(form);
 
     const rawDuration = Number(data.get("duration"));

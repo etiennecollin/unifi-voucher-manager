@@ -4,17 +4,17 @@ import SuccessModal from "@/components/modals/SuccessModal";
 import { Voucher, VoucherCreateData } from "@/types/voucher";
 import { api } from "@/utils/api";
 import { notify } from "@/utils/notifications";
-import { useCallback, useState, FormEvent } from "react";
+import { useCallback, useState, SubmitEvent } from "react";
 
 export default function QuickCreateTab() {
   const [loading, setLoading] = useState<boolean>(false);
   const [newVoucher, setNewVoucher] = useState<Voucher | null>(null);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const form = e.currentTarget;
+    const form = e.currentTarget as HTMLFormElement;
     const data = new FormData(form);
 
     const payload: VoucherCreateData = {
