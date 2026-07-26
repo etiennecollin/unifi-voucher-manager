@@ -3,12 +3,13 @@
 import Spinner from "@/components/utils/Spinner";
 import VoucherCard from "@/components/VoucherCard";
 import VoucherModal from "@/components/modals/VoucherModal";
-import { PrintMode } from "@/app/print/page";
 import { Voucher } from "@/types/voucher";
 import { api } from "@/utils/api";
 import { notify } from "@/utils/notifications";
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { PrintMode } from "@/types/print";
+import { storePrintJob } from "@/utils/print";
 
 export default function VouchersTab() {
   const [loading, setLoading] = useState(true);
@@ -133,19 +134,8 @@ export default function VouchersTab() {
   }, [load, cancelEdit]);
 
   const handlePrintClick = (mode: PrintMode) => {
-    const MAX_VOUCHERS_PRINT = 30;
-    if (selectedVouchers.length > MAX_VOUCHERS_PRINT) {
-      notify(
-        `Cannot print more than ${MAX_VOUCHERS_PRINT} vouchers at once`,
-        "warning",
-      );
-      return;
-    }
-    // Prepare the data for the URL
-    const vouchersParam = encodeURIComponent(JSON.stringify(selectedVouchers));
-    const printUrl = `/print?vouchers=${vouchersParam}&mode=${mode}`;
-
-    router.replace(printUrl);
+    const batchId = storePrintJob(selectedVouchers, mode);
+    router.replace(`/print?batchId=${batchId}`);
   };
 
   return (

@@ -14,8 +14,7 @@ import {
 import { useGlobal } from "@/contexts/GlobalContext";
 import { formatCode } from "@/utils/format";
 import Spinner from "@/components/utils/Spinner";
-
-export type PrintMode = "list" | "grid";
+import { PrintMode } from "@/types/print";
 
 // This component represents a single voucher card to be printed
 function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
@@ -103,45 +102,67 @@ function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
   );
 }
 
-// This component handles displaying and printing the vouchers based on URL params
+// This component handles displaying and printing the vouchers
 function Vouchers() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [mode, setMode] = useState<PrintMode>("list");
-  const lastSearchParams = useRef<string | null>(null);
+  const [batchId, setBatchId] = useState<string | null>(null);
 
+  const hasPrinted = useRef(false);
+
+  // Load print job
   useEffect(() => {
-    const paramString = searchParams.toString();
-    if (lastSearchParams.current === paramString) {
+    const id = searchParams.get("batchId");
+    if (!id) {
       return;
     }
-    lastSearchParams.current = paramString;
 
-    const vouchersParam = searchParams.get("vouchers");
-    const modeParam = searchParams.get("mode");
-
-    if (!vouchersParam || !modeParam) {
+    const stored = localStorage.getItem(`print-job-${id}`);
+    if (!stored) {
       return;
     }
 
     try {
-      const parsedVouchers = JSON.parse(decodeURIComponent(vouchersParam));
-      setVouchers(parsedVouchers);
-      setMode(modeParam as PrintMode);
+      const { vouchers: storedVouchers, mode: storedMode } = JSON.parse(stored);
 
-      setTimeout(() => {
-        window.print();
-        router.replace("/");
-      }, 100);
+      setVouchers(storedVouchers as Voucher[]);
+      setMode((storedMode as PrintMode) || "list");
+      setBatchId(id);
     } catch (error) {
-      console.error("Failed to parse vouchers:", error);
+      console.error("Failed to load print job:", error);
     }
-  }, [searchParams, router]);
+  }, [searchParams]);
+
+  // Print once vouchers exist
+  useEffect(() => {
+    if (!vouchers.length || !batchId || hasPrinted.current) {
+      return;
+    }
+
+    hasPrinted.current = true;
+
+    const handleAfterPrint = () => {
+      localStorage.removeItem(`print-job-${batchId}`);
+      router.replace("/");
+    };
+    window.addEventListener("afterprint", handleAfterPrint);
+
+    const timer = setTimeout(() => {
+      window.print();
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("afterprint", handleAfterPrint);
+    };
+  }, [vouchers, batchId, router]);
 
   return !vouchers.length ? (
     <div style={{ textAlign: "center" }}>
-      No vouchers to print, press backspace
+      No vouchers to print, press escape or backspace.
     </div>
   ) : (
     <div className={mode === "grid" ? "print-grid" : "print-list"}>

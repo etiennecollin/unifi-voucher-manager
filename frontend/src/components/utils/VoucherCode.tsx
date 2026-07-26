@@ -4,6 +4,7 @@ import { notify } from "@/utils/notifications";
 import { useState } from "react";
 import { Voucher } from "@/types/voucher";
 import { useRouter } from "next/navigation";
+import { storePrintJob } from "@/utils/print";
 
 type Props = {
   voucher: Voucher;
@@ -26,10 +27,8 @@ export default function VoucherCode({ voucher, contentClassName = "" }: Props) {
   };
 
   const handlePrint = () => {
-    const vouchersParam = encodeURIComponent(JSON.stringify([voucher]));
-    const printUrl = `/print?vouchers=${vouchersParam}&mode=list`;
-
-    router.replace(printUrl);
+    const batchId = storePrintJob([voucher], "list");
+    router.replace(`/print?batchId=${batchId}`);
   };
 
   return (
