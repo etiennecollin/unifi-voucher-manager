@@ -217,6 +217,9 @@ Make sure to configure the required variables. The optional variables generally 
 - **`ROLLING_VOUCHER_DURATION_MINUTES`: `minutes`** (_Optional_)
   - **Description**: Number of minutes a rolling voucher will be valid for once activated.
   - **Example**: `480` (default)
+- **`PURGE_ALL_EXPIRED_VOUCHERS`: `bool`** (_Optional_)
+  - **Description**: When `true`, periodically purge all expired vouchers. When `false`, periodically only purge expired rolling vouchers.
+  - **Example**: `false` (default)
 - **`WIFI_SSID`: `string`** (_Optional_)
   - **Description**: WiFi SSID used for the QR code. (required for QR code to be generated)
   - **Example**: `My WiFi SSID`

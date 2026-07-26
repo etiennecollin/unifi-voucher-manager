@@ -64,7 +64,10 @@ async fn main() {
     // =================================
     // Start scheduled tasks
     // =================================
-    tokio::spawn(run_daily_purge(environment.timezone));
+    tokio::spawn(run_daily_purge(
+        environment.timezone,
+        environment.purge_all_expired_vouchers,
+    ));
 
     // =================================
     // Setup Axum server
