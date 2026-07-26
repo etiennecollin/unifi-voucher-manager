@@ -5,16 +5,16 @@ edition = "2024"
 
 [dependencies]
 axum = "0.8.9"
-chrono = { version = "0.4.44" }
+chrono = { version = "0.4.45" }
 chrono-tz = "0.10.4"
 dotenvy = { version = "0.15.7", optional = true }
 percent-encoding = "2.3.2"
-reqwest = { version = "0.13.3", features = ["json"] }
-serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.149"
-tokio = { version = "1.52.3", features = ["full"] }
-tower = "0.5.3" # Remove??
-tower-http = { version = "0.6.10", features = ["cors"] }
+reqwest = { version = "0.13.4", features = ["json"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+tokio = { version = "1.53.1", features = ["full"] }
+tower = "0.5.3"
+tower-http = { version = "0.7.0", features = ["cors"] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
