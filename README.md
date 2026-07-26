@@ -248,7 +248,7 @@ Make sure to configure the required variables. The optional variables generally 
   - **Example**: `false` (default)
 - **`PRINT_CONFIG`: `JSON object`** (_Optional_)
   - **Description**: Controls which fields are included when printing vouchers. Any omitted fields default to `true`. Keep in mind the string must contain valid JSON.
-  - **Example**: `{"showDuration":true,"showMaxGuests":true,"showDataUsageLimit":true,"showRxRateLimit":true,"showTxRateLimit":true,"showId":true,"showPrintTime":true}` (default)
+  - **Example**: `{"showLogo":true,"showDuration":true,"showMaxGuests":true,"showDataUsageLimit":true,"showRxRateLimit":true,"showTxRateLimit":true,"showId":true,"showPrintTime":true}` (default)
 
 ## 🐛 Troubleshooting
 

@@ -83,7 +83,10 @@ function VoucherPrintCard({
           {wifiString && (
             <>
               <div className="font-bold mb-2">Scan to Connect</div>
-              <WifiQr sizeRatio={0.85} />
+              <WifiQr
+                sizeRatio={0.85}
+                imageSrc={config.showLogo ? undefined : ""}
+              />
             </>
           )}
           <div className="print-qr-text">

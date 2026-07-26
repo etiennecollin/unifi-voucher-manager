@@ -56,6 +56,15 @@ export default function WifiQr({
     return () => observer.disconnect();
   }, [sizeRatio, overrideSize]);
 
+  const imageSettings = imageSrc
+    ? {
+        src: imageSrc,
+        height: Math.floor(qrSize / 4),
+        width: Math.floor(qrSize / 4),
+        excavate: true,
+      }
+    : undefined;
+
   return (
     <div ref={containerRef} className={`flex-center ${className}`}>
       <div className="flex-center flex-col gap-4 text-center">
@@ -68,12 +77,7 @@ export default function WifiQr({
               bgColor="transparent"
               fgColor="currentColor"
               title={`Wi-Fi access: ${wifiConfig.ssid}`}
-              imageSettings={{
-                src: imageSrc,
-                height: Math.floor(qrSize / 4),
-                width: Math.floor(qrSize / 4),
-                excavate: true,
-              }}
+              imageSettings={imageSettings}
             />
             <p className="text-sm text-muted">
               Scan to join <strong>{wifiConfig.ssid}</strong>
