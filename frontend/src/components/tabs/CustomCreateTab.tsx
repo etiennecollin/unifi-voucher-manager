@@ -52,7 +52,7 @@ export default function CustomCreateTab() {
 
     if (durationMinutes > MAX_VOUCHER_DURATION_MINUTES) {
       notify(
-        `Duration too long. Maximum allowed is ${MAX_VOUCHER_DURATION_MINUTES} minutes.`,
+        `Duration too long. Maximum allowed is ${MAX_VOUCHER_DURATION_MINUTES} minutes`,
         "error",
       );
       setLoading(false);
@@ -73,7 +73,14 @@ export default function CustomCreateTab() {
       const res = await api.createVoucher(payload);
       const voucher = res.vouchers?.[0];
       if (voucher) {
-        setNewVoucher(voucher);
+        if (res.vouchers.length == 1) {
+          setNewVoucher(voucher);
+        } else {
+          notify(
+            `Successfully created ${res.vouchers.length} vouchers`,
+            "success",
+          );
+        }
         form.reset();
       } else {
         notify(
