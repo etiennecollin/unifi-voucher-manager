@@ -7,8 +7,22 @@ use tracing::{debug, error, info};
 
 use crate::{models::*, unifi_api::UNIFI_API};
 
-pub async fn get_vouchers_handler() -> Result<Json<GetVouchersResponse>, StatusCode> {
+pub async fn get_vouchers_filtered_handler(
+    Query(params): Query<VouchersGetRequest>,
+) -> Result<Json<VouchersGetResponse>, StatusCode> {
     debug!("Received request to get vouchers");
+    let client = UNIFI_API.get().expect("UnifiAPI not initialized");
+    match client.get_vouchers(&params).await {
+        Ok(response) => Ok(Json(response)),
+        Err(e) => {
+            error!("Failed to get vouchers: {}", e);
+            Err(e)
+        }
+    }
+}
+
+pub async fn get_all_vouchers_handler() -> Result<Json<VouchersGetResponse>, StatusCode> {
+    debug!("Received request to get all vouchers");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
     match client.get_all_vouchers().await {
         Ok(response) => Ok(Json(response)),
@@ -45,7 +59,7 @@ pub async fn get_newest_voucher_handler() -> Result<Json<Voucher>, StatusCode> {
 }
 
 pub async fn get_voucher_details_handler(
-    Query(params): Query<DetailsRequest>,
+    Query(params): Query<VoucherDetailsRequest>,
 ) -> Result<Json<Voucher>, StatusCode> {
     debug!("Received request to get voucher details");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
@@ -59,11 +73,11 @@ pub async fn get_voucher_details_handler(
 }
 
 pub async fn create_voucher_handler(
-    Json(request): Json<CreateVoucherRequest>,
-) -> Result<Json<CreateVoucherResponse>, StatusCode> {
+    Json(request): Json<VouchersCreateRequest>,
+) -> Result<Json<VouchersCreateResponse>, StatusCode> {
     debug!("Received request to create voucher");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.create_voucher(request.clone()).await {
+    match client.create_voucher(&request).await {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
             error!("Failed to create voucher: {}", e);
@@ -79,23 +93,23 @@ pub async fn create_rolling_voucher_handler(
 
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
 
-    if let Some(forwarded) = headers.get("x-forwarded-for") {
-        if let Ok(ip) = forwarded.to_str() {
-            debug!("Client IP from x-forwarded-for: {}", ip);
+    if let Some(forwarded) = headers.get("x-forwarded-for")
+        && let Ok(ip) = forwarded.to_str()
+    {
+        debug!("Client IP from x-forwarded-for: {}", ip);
 
-            // Check if user already rotated the rolling voucher
-            if client.check_rolling_voucher_ip(ip).await? {
-                info!("Rolling voucher already rotated for IP: {}", ip);
-                return Err(StatusCode::FORBIDDEN);
-            }
+        // Check if user already rotated the rolling voucher
+        if client.check_rolling_voucher_ip(ip).await? {
+            info!("Rolling voucher already rotated for IP: {}", ip);
+            return Err(StatusCode::FORBIDDEN);
+        }
 
-            // Voucher rotation allowed, create a new rolling voucher
-            match client.create_rolling_voucher(ip).await {
-                Ok(response) => return Ok(Json(response)),
-                Err(e) => {
-                    error!("Failed to create rolling voucher: {}", e);
-                    return Err(e);
-                }
+        // Voucher rotation allowed, create a new rolling voucher
+        match client.create_rolling_voucher(ip).await {
+            Ok(response) => return Ok(Json(response)),
+            Err(e) => {
+                error!("Failed to create rolling voucher: {}", e);
+                return Err(e);
             }
         }
     }
@@ -105,7 +119,7 @@ pub async fn create_rolling_voucher_handler(
 }
 
 pub async fn delete_selected_handler(
-    Query(params): Query<DeleteRequest>,
+    Query(params): Query<VouchersDeleteRequest>,
 ) -> Result<Json<DeleteResponse>, StatusCode> {
     debug!("Received request to delete selected vouchers");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");

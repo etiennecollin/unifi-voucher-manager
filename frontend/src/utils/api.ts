@@ -3,6 +3,7 @@ import {
   VoucherCreateData,
   VoucherCreatedResponse,
   VoucherDeletedResponse,
+  VoucherGetResponse,
 } from "@/types/voucher";
 import { notifyVouchersUpdated } from "./actions";
 
@@ -31,10 +32,10 @@ export const MIN_VOUCHER_DURATION_MINUTES = 1;
 export const MAX_VOUCHER_DURATION_MINUTES = 525_600;
 
 export const MIN_VOUCHER_COUNT = 1;
-export const MAX_VOUCHER_COUNT = 10;
+export const MAX_VOUCHER_COUNT = 1000;
 
 export const MIN_VOUCHER_GUESTS = 1;
-export const MAX_VOUCHER_GUESTS = 5;
+export const MAX_VOUCHER_GUESTS = 1000;
 
 export const MIN_VOUCHER_DATA_MB = 1;
 export const MAX_VOUCHER_DATA_MB = 1_048_576;
@@ -46,7 +47,7 @@ export const MIN_VOUCHER_UPLOAD_KBPS = 2;
 export const MAX_VOUCHER_UPLOAD_KBPS = 100_000;
 
 export const api = {
-  getAllVouchers: () => call<{ data: Voucher[] }>("/vouchers"),
+  getAllVouchers: () => call<VoucherGetResponse>("/vouchers"),
 
   getRollingVoucher: () => call<Voucher>("/vouchers/rolling"),
 
@@ -93,14 +94,25 @@ export const api = {
   },
 
   deleteSelectedVouchers: async (ids: string[]) => {
-    const qs = ids.map(encodeURIComponent).join(",");
-    const result = await call<VoucherDeletedResponse>(
-      `/vouchers/selected?ids=${qs}`,
-      {
-        method: "DELETE",
-      },
-    );
-    await notifyVouchersUpdated();
-    return result;
+    const BATCH_SIZE = 30;
+    let totalDeleted = 0;
+
+    try {
+      for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+        const batch = ids.slice(i, i + BATCH_SIZE);
+        const qs = batch.map(encodeURIComponent).join(",");
+        const result: VoucherDeletedResponse =
+          await call<VoucherDeletedResponse>(`/vouchers/selected?ids=${qs}`, {
+            method: "DELETE",
+          });
+        totalDeleted += result.vouchersDeleted;
+      }
+
+      return {
+        vouchersDeleted: totalDeleted,
+      };
+    } finally {
+      await notifyVouchersUpdated();
+    }
   },
 };

@@ -7,10 +7,7 @@ use tracing::{debug, error, info, warn};
 
 use crate::{
     environment::{ENVIRONMENT, Environment},
-    models::{
-        CreateVoucherRequest, CreateVoucherResponse, DeleteResponse, ErrorResponse,
-        GetSitesResponse, GetVouchersResponse, Voucher,
-    },
+    models::*,
 };
 
 const UNIFI_API_ROUTE: &str = "proxy/network/integration/v1/sites";
@@ -117,26 +114,28 @@ impl<'a> UnifiAPI<'a> {
     }
 
     async fn make_request<
-        T: serde::ser::Serialize + Sized,
-        U: serde::de::DeserializeOwned + Sized,
+        Q: serde::ser::Serialize + Sized,
+        B: serde::ser::Serialize + Sized,
+        R: serde::de::DeserializeOwned + Sized,
     >(
         &self,
         request_type: RequestType,
         url: &str,
-        body: Option<&T>,
-    ) -> Result<U, StatusCode> {
+        query: Option<&Q>,
+        body: Option<&B>,
+    ) -> Result<R, StatusCode> {
         // Make request
         let response_result = match request_type {
-            RequestType::Get => self.client.get(url).send().await,
+            RequestType::Get => self.client.get(url).query(&query).send().await,
             RequestType::Post => {
                 if let Some(b) = body {
-                    self.client.post(url).json(b).send().await
+                    self.client.post(url).query(&query).json(b).send().await
                 } else {
                     error!("Body is required for POST requests");
                     return Err(StatusCode::BAD_REQUEST);
                 }
             }
-            RequestType::Delete => self.client.delete(url).send().await,
+            RequestType::Delete => self.client.delete(url).query(&query).send().await,
         };
 
         // Check if the request was successful
@@ -184,7 +183,7 @@ impl<'a> UnifiAPI<'a> {
             })?;
 
         // Parse the JSON into the expected structure
-        serde_json::from_value::<U>(response_json).map_err(|e| {
+        serde_json::from_value::<R>(response_json).map_err(|e| {
             error!("Failed to parse response JSON structure: {:?}", e);
             debug!("Response body: {}", response_text);
             StatusCode::INTERNAL_SERVER_ERROR
@@ -197,7 +196,7 @@ impl<'a> UnifiAPI<'a> {
             self.sites_api_url
         );
         let result: GetSitesResponse = self
-            .make_request(RequestType::Get, &url, None::<&()>)
+            .make_request(RequestType::Get, &url, None::<&()>, None::<&()>)
             .await?;
 
         if result.data.is_empty() {
@@ -213,12 +212,68 @@ impl<'a> UnifiAPI<'a> {
         Ok(id)
     }
 
-    pub async fn get_all_vouchers(&self) -> Result<GetVouchersResponse, StatusCode> {
-        let mut result: GetVouchersResponse = self
-            .make_request(RequestType::Get, &self.voucher_api_url, None::<&()>)
+    pub async fn get_vouchers(
+        &self,
+        request: &VouchersGetRequest,
+    ) -> Result<VouchersGetResponse, StatusCode> {
+        let mut result: VouchersGetResponse = self
+            .make_request(
+                RequestType::Get,
+                &self.voucher_api_url,
+                Some(request),
+                None::<&()>,
+            )
             .await?;
         result.data = self.process_vouchers(result.data);
         Ok(result)
+    }
+
+    pub async fn get_all_vouchers(&self) -> Result<VouchersGetResponse, StatusCode> {
+        const PAGE_SIZE: u32 = 1000;
+
+        let mut request = VouchersGetRequest {
+            offset: 0,
+            limit: PAGE_SIZE,
+            filter: None,
+        };
+
+        let mut all_vouchers = Vec::new();
+        let mut total_count;
+
+        loop {
+            let page: VouchersGetResponse = self
+                .make_request(
+                    RequestType::Get,
+                    &self.voucher_api_url,
+                    Some(&request),
+                    None::<&()>,
+                )
+                .await?;
+
+            total_count = page.total_count;
+
+            let received = page.data.len() as u32;
+
+            if received == 0 {
+                break; // Prevent infinite loops on unexpected API behavior
+            }
+
+            all_vouchers.extend(page.data);
+
+            request.offset += received;
+
+            if request.offset as u64 >= total_count {
+                break;
+            }
+        }
+
+        Ok(VouchersGetResponse {
+            offset: 0,
+            limit: PAGE_SIZE,
+            count: all_vouchers.len() as u32,
+            total_count,
+            data: self.process_vouchers(all_vouchers),
+        })
     }
 
     pub async fn get_rolling_voucher(&self) -> Result<Option<Voucher>, StatusCode> {
@@ -267,7 +322,7 @@ impl<'a> UnifiAPI<'a> {
         let url = format!("{}/{}", self.voucher_api_url, id);
 
         let mut result: Voucher = self
-            .make_request(RequestType::Get, &url, None::<&()>)
+            .make_request(RequestType::Get, &url, None::<&()>, None::<&()>)
             .await?;
 
         self.process_voucher(&mut result);
@@ -276,10 +331,15 @@ impl<'a> UnifiAPI<'a> {
 
     pub async fn create_voucher(
         &self,
-        request: CreateVoucherRequest,
-    ) -> Result<CreateVoucherResponse, StatusCode> {
-        let mut result: CreateVoucherResponse = self
-            .make_request(RequestType::Post, &self.voucher_api_url, Some(&request))
+        request: &VouchersCreateRequest,
+    ) -> Result<VouchersCreateResponse, StatusCode> {
+        let mut result: VouchersCreateResponse = self
+            .make_request(
+                RequestType::Post,
+                &self.voucher_api_url,
+                None::<&()>,
+                Some(request),
+            )
             .await?;
         result.vouchers = self.process_vouchers(result.vouchers);
         Ok(result)
@@ -303,7 +363,7 @@ impl<'a> UnifiAPI<'a> {
     }
 
     pub async fn create_rolling_voucher(&self, ip: &str) -> Result<Voucher, StatusCode> {
-        let request = CreateVoucherRequest {
+        let request = VouchersCreateRequest {
             count: 1,
             name: format!(
                 "{} {}-{}",
@@ -319,7 +379,7 @@ impl<'a> UnifiAPI<'a> {
         };
 
         let rolling = self
-            .create_voucher(request)
+            .create_voucher(&request)
             .await?
             .vouchers
             .first()
@@ -353,13 +413,13 @@ impl<'a> UnifiAPI<'a> {
             format!("{}?filter=or({})", self.voucher_api_url, filter_expr)
         };
 
-        self.make_request(RequestType::Delete, &url, None::<&()>)
+        self.make_request(RequestType::Delete, &url, None::<&()>, None::<&()>)
             .await
     }
 
     pub async fn delete_expired_vouchers(&self) -> Result<DeleteResponse, StatusCode> {
         let url = format!("{}?filter=expired.eq(true)", self.voucher_api_url);
-        self.make_request(RequestType::Delete, &url, None::<&()>)
+        self.make_request(RequestType::Delete, &url, None::<&()>, None::<&()>)
             .await
     }
 
@@ -369,7 +429,7 @@ impl<'a> UnifiAPI<'a> {
             self.voucher_api_url,
             utf8_percent_encode(ROLLING_VOUCHER_NAME_PREFIX, FRAGMENT)
         );
-        self.make_request(RequestType::Delete, &url, None::<&()>)
+        self.make_request(RequestType::Delete, &url, None::<&()>, None::<&()>)
             .await
     }
 }

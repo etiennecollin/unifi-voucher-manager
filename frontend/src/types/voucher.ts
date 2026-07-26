@@ -14,18 +14,25 @@ export interface Voucher {
   txRateLimitKbps?: number | null;
 }
 
-export interface VoucherCreateData
-  extends Omit<
-    Voucher,
-    | "id"
-    | "createdAt"
-    | "code"
-    | "authorizedGuestCount"
-    | "activatedAt"
-    | "expiresAt"
-    | "expired"
-  > {
+export interface VoucherCreateData extends Omit<
+  Voucher,
+  | "id"
+  | "createdAt"
+  | "code"
+  | "authorizedGuestCount"
+  | "activatedAt"
+  | "expiresAt"
+  | "expired"
+> {
   count: number;
+}
+
+export interface VoucherGetResponse {
+  offset: number;
+  limit: number;
+  count: number;
+  totalCount: number;
+  data: Voucher[];
 }
 
 export interface VoucherDeletedResponse {

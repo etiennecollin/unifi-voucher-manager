@@ -93,7 +93,9 @@ export default function VouchersTab() {
       try {
         const res =
           kind === "selected"
-            ? await api.deleteSelectedVouchers([...selectedVouchers.map((v) => v.id)])
+            ? await api.deleteSelectedVouchers([
+                ...selectedVouchers.map((v) => v.id),
+              ])
             : await api.deleteSelectedVouchers([...expiredIds]);
 
         const count = res.vouchersDeleted || 0;
@@ -131,8 +133,16 @@ export default function VouchersTab() {
   }, [load, cancelEdit]);
 
   const handlePrintClick = (mode: PrintMode) => {
+    const MAX_VOUCHERS_PRINT = 30;
+    if (selectedVouchers.length > MAX_VOUCHERS_PRINT) {
+      notify(
+        `Cannot print more than ${MAX_VOUCHERS_PRINT} vouchers at once`,
+        "warning",
+      );
+      return;
+    }
     // Prepare the data for the URL
-    const vouchersParam = encodeURIComponent(JSON.stringify(vouchers));
+    const vouchersParam = encodeURIComponent(JSON.stringify(selectedVouchers));
     const printUrl = `/print?vouchers=${vouchersParam}&mode=${mode}`;
 
     router.replace(printUrl);
