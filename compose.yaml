@@ -16,6 +16,10 @@ services:
     ports:
       - "3000:3000"
 
+    # Display your custom SVG logo. The mount destination CANNOT BE CHANGED.
+    # volumes:
+    #   - "./assets/my_logo.svg:/app/frontend/public/logo.svg"
+
     # SEE README FOR ENVIRONMENT VARIABLES DOCUMENTATION
     environment:
       UNIFI_CONTROLLER_URL: "URL to your UniFi controller with protocol (`http://` or `https://`)."

@@ -22,6 +22,7 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
   - [Getting UniFi API Credentials](#getting-unifi-api-credentials)
   - [Rolling Vouchers and Kiosk Page](#rolling-vouchers-and-kiosk-page)
     - [How Rolling Vouchers Work](#how-rolling-vouchers-work)
+  - [Custom SVG Logo](#custom-svg-logo)
   - [Environment Variables](#environment-variables)
 - [🐛 Troubleshooting](#-troubleshooting)
   - [Common Issues](#common-issues)
@@ -62,6 +63,7 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 - **Responsive Design** - Works seamlessly across all screen sizes
 - **Smooth Animations** – Semantic transitions for polished UX
 - **Real-time Notifications** - Instant feedback for all operations
+- **Custom SVG Logo** - Display your own logo on the main page
 
 ### 🔧 Technical Features
 
@@ -155,6 +157,15 @@ Rolling vouchers provide a seamless way to automatically generate guest network 
    - Rolling vouchers are created with special naming conventions to distinguish them from manually created vouchers, making them easy to identify in your voucher management interface
 4. **IP-Based Uniqueness**: Each IP address can only generate one voucher per session (prevents abuse from page reloads)
 5. **Daily Maintenance**: To prevent clutter, expired rolling vouchers are automatically deleted at midnight (based on your configured `TIMEZONE` in [Environment Variables](#environment-variables))
+
+### Custom SVG Logo
+
+To display your own custom logo:
+
+- If you are using docker, simply mount the SVG file in the container at `/app/frontend/public/logo.svg`. An example is in `./compose.yaml`.
+  - The mount destination (including the file name) **CANNOT BE CHANGED**.
+- If you are **not** using docker, place the SVG file in `./frontend/public/logo.svg`.
+  - The path to the logo (including the file name) **CANNOT BE CHANGED**.
 
 ### Environment Variables
 
