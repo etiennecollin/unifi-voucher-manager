@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "codelldb",
+      "request": "launch",
+      "name": "Debug Rust (dotenv feature)",
+      "program": "${workspaceFolder}/backend/target/debug/backend",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": ["rust"]
+      // "preLaunchTask": "cargo build --features dotenv"
+    }
+  ]
+}
