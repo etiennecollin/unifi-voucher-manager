@@ -79,23 +79,23 @@ pub async fn create_rolling_voucher_handler(
 
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
 
-    if let Some(forwarded) = headers.get("x-forwarded-for") {
-        if let Ok(ip) = forwarded.to_str() {
-            debug!("Client IP from x-forwarded-for: {}", ip);
+    if let Some(forwarded) = headers.get("x-forwarded-for")
+        && let Ok(ip) = forwarded.to_str()
+    {
+        debug!("Client IP from x-forwarded-for: {}", ip);
 
-            // Check if user already rotated the rolling voucher
-            if client.check_rolling_voucher_ip(ip).await? {
-                info!("Rolling voucher already rotated for IP: {}", ip);
-                return Err(StatusCode::FORBIDDEN);
-            }
+        // Check if user already rotated the rolling voucher
+        if client.check_rolling_voucher_ip(ip).await? {
+            info!("Rolling voucher already rotated for IP: {}", ip);
+            return Err(StatusCode::FORBIDDEN);
+        }
 
-            // Voucher rotation allowed, create a new rolling voucher
-            match client.create_rolling_voucher(ip).await {
-                Ok(response) => return Ok(Json(response)),
-                Err(e) => {
-                    error!("Failed to create rolling voucher: {}", e);
-                    return Err(e);
-                }
+        // Voucher rotation allowed, create a new rolling voucher
+        match client.create_rolling_voucher(ip).await {
+            Ok(response) => return Ok(Json(response)),
+            Err(e) => {
+                error!("Failed to create rolling voucher: {}", e);
+                return Err(e);
             }
         }
     }
