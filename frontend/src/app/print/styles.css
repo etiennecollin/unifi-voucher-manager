@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "../globals.css";
 
 /* Print page settings */
 @media print {
