@@ -7,15 +7,12 @@ import { useGlobal } from "@/contexts/GlobalContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-type Props = {
-  isLogoInvertible: boolean;
-};
-
-export default function Header({ isLogoInvertible }: Props) {
+export default function Header() {
   const [showWifi, setShowWifi] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const router = useRouter();
-  const { wifiConfig, wifiString } = useGlobal();
+  const { runtimeConfig, wifiConfig, wifiString } = useGlobal();
+  const isLogoInvertible = runtimeConfig.IS_LOGO_INVERTIBLE;
   const qrAvailable: boolean = useMemo(
     () => !!(wifiConfig && wifiString),
     [wifiConfig, wifiString],
