@@ -276,10 +276,10 @@ impl<'a> UnifiAPI<'a> {
 
     pub async fn create_voucher(
         &self,
-        request: CreateVoucherRequest,
+        request: &CreateVoucherRequest,
     ) -> Result<CreateVoucherResponse, StatusCode> {
         let mut result: CreateVoucherResponse = self
-            .make_request(RequestType::Post, &self.voucher_api_url, Some(&request))
+            .make_request(RequestType::Post, &self.voucher_api_url, Some(request))
             .await?;
         result.vouchers = self.process_vouchers(result.vouchers);
         Ok(result)
@@ -319,7 +319,7 @@ impl<'a> UnifiAPI<'a> {
         };
 
         let rolling = self
-            .create_voucher(request)
+            .create_voucher(&request)
             .await?
             .vouchers
             .first()

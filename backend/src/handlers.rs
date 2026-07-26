@@ -63,7 +63,7 @@ pub async fn create_voucher_handler(
 ) -> Result<Json<CreateVoucherResponse>, StatusCode> {
     debug!("Received request to create voucher");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.create_voucher(request.clone()).await {
+    match client.create_voucher(&request).await {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
             error!("Failed to create voucher: {}", e);
