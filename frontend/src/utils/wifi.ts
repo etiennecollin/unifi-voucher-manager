@@ -73,10 +73,14 @@ export function generateWifiConfig(config: RuntimeConfig): WifiConfig {
   } else {
     switch (hidden.trim().toLowerCase()) {
       case "true":
+      case "y":
+      case "yes":
       case "1":
         hidden_parsed = true;
         break;
       case "false":
+      case "n":
+      case "no":
       case "0":
         hidden_parsed = false;
         break;
