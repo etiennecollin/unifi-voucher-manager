@@ -32,7 +32,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="antialiased">
         <GlobalProvider wifiConfig={wifiConfig} wifiString={wifiString}>
           {children}
