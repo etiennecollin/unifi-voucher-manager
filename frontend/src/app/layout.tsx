@@ -1,7 +1,7 @@
 import { GlobalProvider } from "@/contexts/GlobalContext";
 import "./globals.css";
 import type { Metadata } from "next";
-import { getRuntimeConfig } from "@/utils/runtimeConfig";
+import { getRuntimeConfig } from "@/utils/config";
 import { generateWifiConfig, generateWiFiQRString } from "@/utils/wifi";
 
 export const metadata: Metadata = {
@@ -19,13 +19,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const runtimeConfig = getRuntimeConfig();
+  const config = getRuntimeConfig();
 
   let wifiConfig = null;
   let wifiString = null;
 
   try {
-    wifiConfig = generateWifiConfig(runtimeConfig);
+    wifiConfig = generateWifiConfig(config);
     wifiString = generateWiFiQRString(wifiConfig);
   } catch (error) {
     console.warn("Could not generate WiFi QR configuration:", error);

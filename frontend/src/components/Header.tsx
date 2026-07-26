@@ -7,7 +7,11 @@ import { useGlobal } from "@/contexts/GlobalContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function Header() {
+type Props = {
+  isLogoInvertible: boolean;
+};
+
+export default function Header({ isLogoInvertible }: Props) {
   const [showWifi, setShowWifi] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const router = useRouter();
@@ -46,7 +50,7 @@ export default function Header() {
             height={35}
             loading="eager"
             alt="UniFi Voucher Manager logo"
-            className="dark:invert shrink-0"
+            className={"shrink-0" + (isLogoInvertible ? " dark:invert" : "")}
           />
           <h1 className="text-xl md:text-2xl font-semibold text-brand">
             <span className="block sm:hidden">UVM</span>

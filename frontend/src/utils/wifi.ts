@@ -1,4 +1,4 @@
-import { RuntimeConfig } from "@/utils/runtimeConfig";
+import { RuntimeConfig } from "@/types/config";
 
 // Derive the type from the array for easy printing
 const validWifiTypes = ["WPA", "WEP", "nopass"] as const;

@@ -243,6 +243,9 @@ Make sure to configure the required variables. The optional variables generally 
 - **`WIFI_HIDDEN`: `bool`** (_Optional_)
   - **Description**: Whether the WiFi SSID is hidden or broadcasted.
   - **Example**: `false` (default)
+- **`IS_LOGO_INVERTIBLE`: `bool`** (_Optional_)
+  - **Description**: Whether the logo can/should be inverted in dark mode.
+  - **Example**: `false` (default)
 - **`PRINT_CONFIG`: `JSON object`** (_Optional_)
   - **Description**: Controls which fields are included when printing vouchers. Any omitted fields default to `true`.
   - **Example**: `{"duration":true,"maxGuests":true,"dataUsageLimit":true,"rxRateLimit":true,"txRateLimit":true,"id":true,"printTime":true}` (default)

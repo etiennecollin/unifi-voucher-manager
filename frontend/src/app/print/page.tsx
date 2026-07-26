@@ -1,4 +1,4 @@
-import { getRuntimeConfig } from "@/utils/runtimeConfig";
+import { getRuntimeConfig } from "@/utils/config";
 import PrintClient from "./PrintClient";
 
 export default function PrintPage() {

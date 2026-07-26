@@ -1,4 +1,4 @@
-import { getRuntimeConfig } from "@/utils/runtimeConfig";
+import { getRuntimeConfig } from "@/utils/config";
 import WelcomeClient from "./WelcomeClient";
 
 export default function WelcomePage() {

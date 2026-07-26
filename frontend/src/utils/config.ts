@@ -1,33 +1,13 @@
-import { PrintConfig } from "@/types/print";
+import { DEFAULT_RUNTIME_CONFIG, RuntimeConfig } from "@/types/config";
 import fs from "fs";
 import path from "path";
 
-export type RuntimeConfig = {
-  WIFI_SSID?: string;
-  WIFI_PASSWORD?: string;
-  WIFI_TYPE?: string;
-  WIFI_HIDDEN?: string;
-  PRINT_CONFIG: PrintConfig;
-};
-
-const defaultConfig: RuntimeConfig = {
-  PRINT_CONFIG: {
-    duration: true,
-    maxGuests: true,
-    dataUsageLimit: true,
-    rxRateLimit: true,
-    txRateLimit: true,
-    id: true,
-    printTime: true,
-  },
-};
-
 function withDefaults(config: Partial<RuntimeConfig>): RuntimeConfig {
   return {
-    ...defaultConfig,
+    ...DEFAULT_RUNTIME_CONFIG,
     ...config,
     PRINT_CONFIG: {
-      ...defaultConfig.PRINT_CONFIG,
+      ...DEFAULT_RUNTIME_CONFIG.PRINT_CONFIG,
       ...config.PRINT_CONFIG,
     },
   };
@@ -41,6 +21,6 @@ export function getRuntimeConfig(): RuntimeConfig {
     return withDefaults(config);
   } catch (error) {
     console.warn("Unable to read runtime config:", error);
-    return defaultConfig;
+    return DEFAULT_RUNTIME_CONFIG;
   }
 }
