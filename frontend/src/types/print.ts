@@ -7,3 +7,13 @@ export type PrintJob = {
   mode: PrintMode;
   createdAt: number;
 };
+
+export type PrintConfig = {
+  duration: boolean;
+  maxGuests: boolean;
+  dataUsageLimit: boolean;
+  rxRateLimit: boolean;
+  txRateLimit: boolean;
+  id: boolean;
+  printTime: boolean;
+};
