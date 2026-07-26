@@ -2,10 +2,16 @@
 
 import { Theme } from "@/components/utils/ThemeSwitcher";
 import { useServerEvents } from "@/hooks/useServerEvents";
-import { WifiConfig } from "@/utils/wifi";
+import { DEFAULT_RUNTIME_CONFIG, RuntimeConfig } from "@/types/config";
+import {
+  generateWifiConfig,
+  generateWiFiQRString,
+  WifiConfig,
+} from "@/utils/wifi";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type GlobalContextType = {
+  runtimeConfig: RuntimeConfig;
   wifiConfig: WifiConfig | null;
   wifiString: string | null;
   theme: Theme;
@@ -16,22 +22,54 @@ const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 type GlobalProviderProps = {
   children: React.ReactNode;
-  wifiConfig: WifiConfig | null;
-  wifiString: string | null;
 };
 
-export const GlobalProvider = ({
-  children,
-  wifiConfig,
-  wifiString,
-}: GlobalProviderProps) => {
-  const [theme, setTheme] = useState<Theme>("system");
+export const GlobalProvider = ({ children }: GlobalProviderProps) => {
+  const [runtimeConfig, setRuntimeConfig] = useState<RuntimeConfig>(
+    DEFAULT_RUNTIME_CONFIG,
+  );
+  const [wifiConfig, setWifiConfig] = useState<WifiConfig | null>(null);
+  const [wifiString, setWifiString] = useState<string | null>(null);
+
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "system";
+    const stored = localStorage.getItem("theme");
+
+    if (stored === "light" || stored === "dark" || stored === "system") {
+      return stored;
+    }
+
+    return "system";
+  });
+
   useServerEvents();
 
-  // Load theme on mount
+  // Load runtime configuration once after app startup
   useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    if (stored) setTheme(stored);
+    async function loadRuntimeConfig() {
+      try {
+        const response = await fetch("/api/runtime-config", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Runtime config request failed: ${response.status}`);
+        }
+
+        const config: RuntimeConfig = await response.json();
+        setRuntimeConfig(config);
+
+        const generatedWifiConfig = generateWifiConfig(config);
+        const generatedWifiString = generateWiFiQRString(generatedWifiConfig);
+
+        setWifiConfig(generatedWifiConfig);
+        setWifiString(generatedWifiString);
+      } catch (error) {
+        console.warn("Could not load runtime configuration:", error);
+      }
+    }
+
+    loadRuntimeConfig();
   }, []);
 
   // Apply theme when changed
@@ -62,6 +100,7 @@ export const GlobalProvider = ({
   return (
     <GlobalContext.Provider
       value={{
+        runtimeConfig,
         wifiConfig,
         wifiString,
         theme,

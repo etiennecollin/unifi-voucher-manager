@@ -18,23 +18,23 @@ import {
 } from "@/utils/api";
 import { map } from "@/utils/functional";
 import { notify } from "@/utils/notifications";
-import { useCallback, useState, FormEvent } from "react";
+import { useCallback, useState, SubmitEvent } from "react";
 
 type TimeUnit = "minutes" | "hours" | "days";
 
 export default function CustomCreateTab() {
   const [loading, setLoading] = useState(false);
-  const [newVoucher, setNewVoucher] = useState<Voucher | null>(null);
+  const [newVouchers, setNewVouchers] = useState<Voucher[] | null>(null);
   const [durationUnit, setDurationUnit] = useState<TimeUnit>("minutes");
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     setLoading(true);
 
     const parseNumber = (x: FormDataEntryValue) =>
       x !== "" ? Number(x) : null;
 
-    const form = e.currentTarget;
+    const form = e.currentTarget as HTMLFormElement;
     const data = new FormData(form);
 
     const rawDuration = Number(data.get("duration"));
@@ -71,23 +71,9 @@ export default function CustomCreateTab() {
 
     try {
       const res = await api.createVoucher(payload);
-      const voucher = res.vouchers?.[0];
-      if (voucher) {
-        if (res.vouchers.length == 1) {
-          setNewVoucher(voucher);
-        } else {
-          notify(
-            `Successfully created ${res.vouchers.length} vouchers`,
-            "success",
-          );
-        }
-        form.reset();
-      } else {
-        notify(
-          "Voucher created, but its data was found in response",
-          "warning",
-        );
-      }
+      setNewVouchers(res.vouchers);
+      notify(`Successfully created ${res.vouchers.length} vouchers`, "success");
+      form.reset();
     } catch {
       notify("Failed to create voucher", "error");
     }
@@ -101,7 +87,7 @@ export default function CustomCreateTab() {
   };
 
   const closeModal = useCallback(() => {
-    setNewVoucher(null);
+    setNewVouchers(null);
   }, []);
 
   return (
@@ -215,7 +201,9 @@ export default function CustomCreateTab() {
           {loading ? "Creating…" : "Create Custom Voucher"}
         </button>
       </form>
-      {newVoucher && <SuccessModal voucher={newVoucher} onClose={closeModal} />}
+      {newVouchers && (
+        <SuccessModal vouchers={newVouchers} onClose={closeModal} />
+      )}
     </div>
   );
 }

@@ -243,6 +243,12 @@ Make sure to configure the required variables. The optional variables generally 
 - **`WIFI_HIDDEN`: `bool`** (_Optional_)
   - **Description**: Whether the WiFi SSID is hidden or broadcasted.
   - **Example**: `false` (default)
+- **`IS_LOGO_INVERTIBLE`: `bool`** (_Optional_)
+  - **Description**: Whether the logo can/should be inverted in dark mode.
+  - **Example**: `false` (default)
+- **`PRINT_CONFIG`: `JSON object`** (_Optional_)
+  - **Description**: Controls which fields are included when printing vouchers. Any omitted fields default to `true`. Keep in mind the string must contain valid JSON.
+  - **Example**: `{"showLogo":true,"showDuration":true,"showMaxGuests":true,"showDataUsageLimit":true,"showRxRateLimit":true,"showTxRateLimit":true,"showId":true,"showPrintTime":true}` (default)
 
 ## 🐛 Troubleshooting
 
@@ -275,3 +281,5 @@ Make sure to configure the required variables. The optional variables generally 
 ---
 
 **⭐ If this project helped you, please consider giving it a star!**
+
+Disclaimer: This is an independent, unofficial project. It is not affiliated with, endorsed by, or sponsored by Ubiquiti Inc. UniFi, Ubiquiti, and all associated trademarks, logos, and intellectual property are the property of Ubiquiti Inc. Their use in this project is for identification and compatibility purposes only.

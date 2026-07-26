@@ -15,3 +15,5 @@
 !frontend/tsconfig.json
 
 !scripts/**
+
+**/.DS_Store

@@ -13,7 +13,7 @@ type Props = {
 
 export default function VoucherCode({ voucher, contentClassName = "" }: Props) {
   const code = formatCode(voucher.code);
-  const [copied, setCopied] = useState(false);
+  const [_copied, setCopied] = useState(false);
   const router = useRouter();
 
   const handleCopy = async () => {

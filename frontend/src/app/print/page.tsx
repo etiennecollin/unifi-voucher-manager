@@ -3,7 +3,6 @@
 import "./styles.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
 import { Voucher } from "@/types/voucher";
 import {
   formatBytes,
@@ -16,33 +15,40 @@ import { formatCode } from "@/utils/format";
 import Spinner from "@/components/utils/Spinner";
 import { PrintMode } from "@/types/print";
 import { TriState } from "@/types/state";
+import WifiQr from "@/components/utils/WifiQr";
 
 // This component represents a single voucher card to be printed
 function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
-  const { wifiConfig, wifiString } = useGlobal();
+  const { runtimeConfig, wifiConfig, wifiString } = useGlobal();
+  const printConfig = runtimeConfig.PRINT_CONFIG;
 
   const fields = [
     {
       label: "Duration",
       value: formatDuration(voucher.timeLimitMinutes),
+      enabled: printConfig.showDuration,
     },
     {
       label: "Max Guests",
       value: formatMaxGuests(voucher.authorizedGuestLimit),
+      enabled: printConfig.showMaxGuests,
     },
     {
       label: "Data Limit",
       value: voucher.dataUsageLimitMBytes
         ? formatBytes(voucher.dataUsageLimitMBytes * 1024 * 1024)
         : "Unlimited",
+      enabled: printConfig.showDataUsageLimit,
     },
     {
       label: "Down Speed",
       value: formatSpeed(voucher.rxRateLimitKbps),
+      enabled: printConfig.showRxRateLimit,
     },
     {
       label: "Up Speed",
       value: formatSpeed(voucher.txRateLimitKbps),
+      enabled: printConfig.showTxRateLimit,
     },
   ];
 
@@ -54,24 +60,27 @@ function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
 
       <div className="print-voucher-code">{formatCode(voucher.code)}</div>
 
-      {fields.map((field) => (
-        <div key={`${voucher.id}:${field.label}`} className="print-info-row">
-          <span className="print-label">{field.label}:</span>
-          <span className="print-value">{field.value}</span>
-        </div>
-      ))}
+      {fields.map(
+        (field) =>
+          field.enabled && (
+            <div
+              key={`${voucher.id}:${field.label}`}
+              className="print-info-row"
+            >
+              <span className="print-label">{field.label}:</span>
+              <span className="print-value">{field.value}</span>
+            </div>
+          ),
+      )}
 
-      {wifiConfig && (
+      {wifiConfig && wifiConfig.ssid && (
         <div className="print-qr-section">
           {wifiString && (
             <>
               <div className="font-bold mb-2">Scan to Connect</div>
-              <QRCodeSVG
-                value={wifiString}
-                size={140}
-                level="H"
-                marginSize={4}
-                title="Wi-Fi Access QR Code"
+              <WifiQr
+                sizeRatio={0.85}
+                imageSrc={printConfig.showLogo ? undefined : ""}
               />
             </>
           )}
@@ -90,15 +99,21 @@ function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
         </div>
       )}
 
-      <div className="print-footer">
-        <div>
-          <strong className="text-sm">ID:</strong> {voucher.id}
+      {(printConfig.showId || printConfig.showPrintTime) && (
+        <div className="print-footer">
+          {printConfig.showId && (
+            <div>
+              <strong className="text-sm">ID:</strong> {voucher.id}
+            </div>
+          )}
+          {printConfig.showPrintTime && (
+            <div>
+              <strong className="text-sm">Printed:</strong>{" "}
+              {new Date().toUTCString()}
+            </div>
+          )}
         </div>
-        <div>
-          <strong className="text-sm">Printed:</strong>{" "}
-          {new Date().toUTCString()}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -188,7 +203,6 @@ function Vouchers() {
   );
 }
 
-// This sets up the print page itself
 export default function PrintPage() {
   const router = useRouter();
 
@@ -198,9 +212,7 @@ export default function PrintPage() {
     };
     window.addEventListener("keydown", onKey);
 
-    return () => {
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [router]);
 
   return (

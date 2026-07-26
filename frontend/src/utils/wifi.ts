@@ -1,4 +1,4 @@
-import { RuntimeConfig } from "@/utils/runtimeConfig";
+import { RuntimeConfig } from "@/types/config";
 
 // Derive the type from the array for easy printing
 const validWifiTypes = ["WPA", "WEP", "nopass"] as const;
@@ -73,10 +73,14 @@ export function generateWifiConfig(config: RuntimeConfig): WifiConfig {
   } else {
     switch (hidden.trim().toLowerCase()) {
       case "true":
+      case "y":
+      case "yes":
       case "1":
         hidden_parsed = true;
         break;
       case "false":
+      case "n":
+      case "no":
       case "0":
         hidden_parsed = false;
         break;

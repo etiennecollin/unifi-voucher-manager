@@ -182,7 +182,7 @@ export default function VouchersTab() {
               disabled={!selectedVouchers.length}
               className="btn-secondary"
             >
-              Print (Tile)
+              Print (Grid)
             </button>
             <button
               onClick={() => handlePrintClick("list")}
