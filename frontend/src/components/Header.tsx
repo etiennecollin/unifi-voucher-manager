@@ -44,6 +44,7 @@ export default function Header() {
             src="/logo.svg"
             width={35}
             height={35}
+            loading="eager"
             alt="UniFi Voucher Manager logo"
             className="dark:invert shrink-0"
           />
@@ -72,6 +73,7 @@ export default function Header() {
               src="/qr.svg"
               width={28}
               height={28}
+              loading="eager"
               className="dark:invert"
               alt="QR code icon"
             />
