@@ -1,14 +1,14 @@
 "use client";
 
-import { Theme } from "@/components/utils/ThemeSwitcher";
-import { useServerEvents } from "@/hooks/useServerEvents";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { DEFAULT_RUNTIME_CONFIG, RuntimeConfig } from "@/types/config";
+import { Theme } from "@/components/utils/ThemeSwitcher";
 import {
   generateWifiConfig,
   generateWiFiQRString,
   WifiConfig,
 } from "@/utils/wifi";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { useServerEvents } from "@/hooks/useServerEvents";
 
 type GlobalContextType = {
   runtimeConfig: RuntimeConfig;
