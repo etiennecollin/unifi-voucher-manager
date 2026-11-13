@@ -3,19 +3,25 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { DEFAULT_RUNTIME_CONFIG, RuntimeConfig } from "@/types/config";
 import { Theme } from "@/components/utils/ThemeSwitcher";
+import { api } from "@/utils/api";
 import {
   generateWifiConfig,
   generateWiFiQRString,
   WifiConfig,
 } from "@/utils/wifi";
+import { notifyVouchersUpdated } from "@/utils/actions";
 import { useServerEvents } from "@/hooks/useServerEvents";
 
 type GlobalContextType = {
+  availableSites: string[];
+  site: string;
+  setSite: (site: string) => void;
+  sitesLoaded: boolean;
+  theme: Theme;
+  setTheme: (t: Theme) => void;
   runtimeConfig: RuntimeConfig;
   wifiConfig: WifiConfig | null;
   wifiString: string | null;
-  theme: Theme;
-  setTheme: (t: Theme) => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -41,6 +47,20 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
 
     return "system";
   });
+
+  const [availableSites, setAvailableSites] = useState<string[]>([]);
+  const [site, setSite] = useState<string>("Default");
+  const [sitesLoaded, setSitesLoaded] = useState(false);
+
+  const updateSite = (newSite: string) => {
+    if (newSite === site) {
+      return;
+    }
+
+    setSite(newSite);
+    localStorage.setItem("site", newSite);
+    notifyVouchersUpdated();
+  };
 
   useServerEvents();
 
@@ -72,6 +92,37 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     loadRuntimeConfig();
   }, []);
 
+  // Load available sites and restore the previously selected site
+  useEffect(() => {
+    async function loadAvailableSites() {
+      try {
+        const res = await api.getSites();
+        const sites = res.siteNames ?? [];
+
+        setAvailableSites(sites);
+
+        const stored = localStorage.getItem("site");
+
+        // Restore saved selection if it still exists; otherwise use the first site
+        const selectedSite =
+          stored && sites.includes(stored) ? stored : (sites[0] ?? "Default");
+
+        setSite(selectedSite);
+        localStorage.setItem("site", selectedSite);
+
+        if (sites.length === 0) {
+          console.warn("No available sites");
+        }
+      } catch (error) {
+        console.error("Could not fetch available sites:", error);
+      } finally {
+        setSitesLoaded(true);
+      }
+    }
+
+    loadAvailableSites();
+  }, []);
+
   // Apply theme when changed
   useEffect(() => {
     const html = document.documentElement;
@@ -100,11 +151,15 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
   return (
     <GlobalContext.Provider
       value={{
+        availableSites,
+        site,
+        setSite: updateSite,
+        sitesLoaded,
+        theme,
+        setTheme,
         runtimeConfig,
         wifiConfig,
         wifiString,
-        theme,
-        setTheme,
       }}
     >
       {children}
