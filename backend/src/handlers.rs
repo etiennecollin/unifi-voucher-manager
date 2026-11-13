@@ -8,11 +8,12 @@ use tracing::{debug, error, info};
 use crate::{models::*, unifi_api::UNIFI_API};
 
 pub async fn get_vouchers_filtered_handler(
+    Query(site): Query<SiteNameRequest>,
     Query(params): Query<VouchersGetRequest>,
 ) -> Result<Json<VouchersGetResponse>, StatusCode> {
     debug!("Received request to get vouchers");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.get_vouchers(&params).await {
+    match client.get_vouchers(site.site_name.as_str(), &params).await {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
             error!("Failed to get vouchers: {}", e);
@@ -21,10 +22,12 @@ pub async fn get_vouchers_filtered_handler(
     }
 }
 
-pub async fn get_all_vouchers_handler() -> Result<Json<VouchersGetResponse>, StatusCode> {
+pub async fn get_all_vouchers_handler(
+    Query(site): Query<SiteNameRequest>,
+) -> Result<Json<VouchersGetResponse>, StatusCode> {
     debug!("Received request to get all vouchers");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.get_all_vouchers().await {
+    match client.get_all_vouchers(site.site_name.as_str()).await {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
             error!("Failed to get vouchers: {}", e);
@@ -33,10 +36,12 @@ pub async fn get_all_vouchers_handler() -> Result<Json<VouchersGetResponse>, Sta
     }
 }
 
-pub async fn get_rolling_voucher_handler() -> Result<Json<Voucher>, StatusCode> {
+pub async fn get_rolling_voucher_handler(
+    Query(site): Query<SiteNameRequest>,
+) -> Result<Json<Voucher>, StatusCode> {
     debug!("Received request to get rolling voucher");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.get_rolling_voucher().await {
+    match client.get_rolling_voucher(site.site_name.as_str()).await {
         Ok(Some(voucher)) => Ok(Json(voucher)),
         Ok(None) => Err(StatusCode::NOT_FOUND),
         Err(e) => {
@@ -46,10 +51,12 @@ pub async fn get_rolling_voucher_handler() -> Result<Json<Voucher>, StatusCode> 
     }
 }
 
-pub async fn get_newest_voucher_handler() -> Result<Json<Voucher>, StatusCode> {
+pub async fn get_newest_voucher_handler(
+    Query(site): Query<SiteNameRequest>,
+) -> Result<Json<Voucher>, StatusCode> {
     debug!("Received request to get newest voucher");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.get_newest_voucher().await {
+    match client.get_newest_voucher(site.site_name.as_str()).await {
         Ok(voucher) => Ok(Json(voucher)),
         Err(e) => {
             error!("Failed to get newest voucher: {}", e);
@@ -59,11 +66,15 @@ pub async fn get_newest_voucher_handler() -> Result<Json<Voucher>, StatusCode> {
 }
 
 pub async fn get_voucher_details_handler(
+    Query(site): Query<SiteNameRequest>,
     Query(params): Query<VoucherDetailsRequest>,
 ) -> Result<Json<Voucher>, StatusCode> {
     debug!("Received request to get voucher details");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.get_voucher_details(params.id).await {
+    match client
+        .get_voucher_details(site.site_name.as_str(), params.id)
+        .await
+    {
         Ok(voucher) => Ok(Json(voucher)),
         Err(e) => {
             error!("Failed to get voucher details: {}", e);
@@ -73,11 +84,15 @@ pub async fn get_voucher_details_handler(
 }
 
 pub async fn create_voucher_handler(
+    Query(site): Query<SiteNameRequest>,
     Json(request): Json<VouchersCreateRequest>,
 ) -> Result<Json<VouchersCreateResponse>, StatusCode> {
     debug!("Received request to create voucher");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.create_voucher(&request).await {
+    match client
+        .create_voucher(site.site_name.as_str(), &request)
+        .await
+    {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
             error!("Failed to create voucher: {}", e);
@@ -88,6 +103,7 @@ pub async fn create_voucher_handler(
 
 pub async fn create_rolling_voucher_handler(
     headers: HeaderMap,
+    Query(site): Query<SiteNameRequest>,
 ) -> Result<Json<Voucher>, StatusCode> {
     debug!("Received request to create voucher");
 
@@ -99,13 +115,19 @@ pub async fn create_rolling_voucher_handler(
         debug!("Client IP from x-forwarded-for: {}", ip);
 
         // Check if user already rotated the rolling voucher
-        if client.check_rolling_voucher_ip(ip).await? {
+        if client
+            .check_rolling_voucher_ip(site.site_name.as_str(), ip)
+            .await?
+        {
             info!("Rolling voucher already rotated for IP: {}", ip);
             return Err(StatusCode::FORBIDDEN);
         }
 
         // Voucher rotation allowed, create a new rolling voucher
-        match client.create_rolling_voucher(ip).await {
+        match client
+            .create_rolling_voucher(site.site_name.as_str(), ip)
+            .await
+        {
             Ok(response) => return Ok(Json(response)),
             Err(e) => {
                 error!("Failed to create rolling voucher: {}", e);
@@ -119,12 +141,16 @@ pub async fn create_rolling_voucher_handler(
 }
 
 pub async fn delete_selected_handler(
+    Query(site): Query<SiteNameRequest>,
     Query(params): Query<VouchersDeleteRequest>,
 ) -> Result<Json<DeleteResponse>, StatusCode> {
     debug!("Received request to delete selected vouchers");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
     let ids = params.ids.split(',').map(|s| s.to_string()).collect();
-    match client.delete_vouchers_by_ids(ids).await {
+    match client
+        .delete_vouchers_by_ids(site.site_name.as_str(), ids)
+        .await
+    {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
             error!("Failed to delete selected vouchers: {}", e);
@@ -133,10 +159,15 @@ pub async fn delete_selected_handler(
     }
 }
 
-pub async fn delete_expired_handler() -> Result<Json<DeleteResponse>, StatusCode> {
+pub async fn delete_expired_handler(
+    Query(site): Query<SiteNameRequest>,
+) -> Result<Json<DeleteResponse>, StatusCode> {
     debug!("Received request to delete expired vouchers");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.delete_expired_vouchers().await {
+    match client
+        .delete_expired_vouchers(site.site_name.as_str())
+        .await
+    {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
             error!("Failed to delete expired vouchers: {}", e);
@@ -145,10 +176,15 @@ pub async fn delete_expired_handler() -> Result<Json<DeleteResponse>, StatusCode
     }
 }
 
-pub async fn delete_expired_rolling_handler() -> Result<Json<DeleteResponse>, StatusCode> {
+pub async fn delete_expired_rolling_handler(
+    Query(site): Query<SiteNameRequest>,
+) -> Result<Json<DeleteResponse>, StatusCode> {
     debug!("Received request to delete expired rolling voucher");
     let client = UNIFI_API.get().expect("UnifiAPI not initialized");
-    match client.delete_expired_rolling_vouchers().await {
+    match client
+        .delete_expired_rolling_vouchers(site.site_name.as_str())
+        .await
+    {
         Ok(response) => Ok(Json(response)),
         Err(e) => {
             error!("Failed to delete expired rolling voucher: {}", e);
@@ -157,10 +193,19 @@ pub async fn delete_expired_rolling_handler() -> Result<Json<DeleteResponse>, St
     }
 }
 
-pub async fn health_check_handler() -> Result<Json<HealthCheckResponse>, StatusCode> {
+pub async fn health_check_handler() -> Json<HealthCheckResponse> {
     debug!("Received health check request");
     let response = HealthCheckResponse {
         status: "ok".to_string(),
     };
-    Ok(Json(response))
+    Json(response)
+}
+
+pub async fn get_site_names_handler() -> Json<SiteNamesResponse> {
+    debug!("Received site names request");
+    let client = UNIFI_API.get().expect("UnifiAPI not initialized");
+    let response = SiteNamesResponse {
+        site_names: client.get_configured_sites_names(),
+    };
+    Json(response)
 }
