@@ -2,6 +2,12 @@
 
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Deserialize)]
+pub struct SiteNameRequest {
+    #[serde(rename = "siteName")]
+    pub site_name: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Voucher {
     pub id: String,
@@ -71,6 +77,12 @@ pub struct HealthCheckResponse {
     pub status: String,
 }
 
+#[derive(Debug, Serialize)]
+pub struct SiteNamesResponse {
+    #[serde(rename = "siteNames")]
+    pub site_names: Vec<String>,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VouchersGetRequest {
     pub offset: u32,
@@ -118,4 +130,32 @@ pub struct ErrorResponse {
     request_path: String,
     #[serde(rename = "requestId")]
     request_id: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SiteConfig {
+    pub name: String,
+    pub id: String,
+}
+
+impl SiteConfig {
+    pub fn try_parse(json: &str) -> Result<Vec<Self>, String> {
+        let mut sites: Vec<Self> = serde_json::from_str(json).map_err(|e| e.to_string())?;
+
+        for site in &mut sites {
+            site.id = site.id.trim().to_ascii_lowercase();
+            site.name = site.name.trim().to_owned();
+        }
+
+        Ok(sites)
+    }
+}
+
+impl Default for SiteConfig {
+    fn default() -> Self {
+        Self {
+            name: "Default".to_owned(),
+            id: "default".to_owned(),
+        }
+    }
 }

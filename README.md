@@ -192,9 +192,10 @@ Make sure to configure the required variables. The optional variables generally 
 - **`UNIFI_HAS_VALID_CERT`: `bool`** (_Optional_)
   - **Description**: Whether your UniFi controller uses a valid SSL certificate. This should normally be set to `true`, especially if you access the controller through a reverse proxy or another setup that provides trusted certificates (e.g., Let's Encrypt). **If you connect directly to the controller’s IP address (which usually serves a self-signed certificate), you may need to set this to `false`.**
   - **Example**: `true` (default)
-- **`UNIFI_SITE_ID`: `string`** (_Optional_)
-  - **Description**: Site ID of your UniFi controller. Using the value `default`, the backend will try to fetch the ID of the default site.
-  - **Example**: `default` (default)
+- **`UNIFI_SITES`: `JSON object`** (_Optional_)
+  - **Description**: A list of UniFi sites to manage. If omitted, all available sites are managed. Set a site's `id` to `default` to use the default site configured in your UniFi controller.
+  - **Example**: `[{"name":"Default","id":"default"}]` (default)
+  - **Example**: `[{"name":"Site 1","id":"site-1-id"},{"name":"Site 2","id":"site-2-id"}]`
 
 > [!CAUTION]
 > To restrict UVM access to the guest subnetwork users while still allowing access to `/welcome` page, set the `GUEST_SUBNETWORK` variable. This makes sure guests do not have access to other UVM pages, such as the voucher management interface (the root `/` page).
