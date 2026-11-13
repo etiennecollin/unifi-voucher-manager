@@ -191,12 +191,17 @@ impl<'a> UnifiAPI<'a> {
     }
 
     async fn get_default_site_id(&self) -> Result<String, StatusCode> {
-        let url = format!(
-            "{}?filter=or(internalReference.eq('default'),name.eq('Default'))",
-            self.sites_api_url
-        );
+        let query = [(
+            "filter",
+            "or(internalReference.eq('default'),name.eq('Default'))",
+        )];
         let result: GetSitesResponse = self
-            .make_request(RequestType::Get, &url, None::<&()>, None::<&()>)
+            .make_request(
+                RequestType::Get,
+                &self.sites_api_url,
+                Some(&query),
+                None::<&()>,
+            )
             .await?;
 
         if result.data.is_empty() {
@@ -407,29 +412,46 @@ impl<'a> UnifiAPI<'a> {
             .collect::<Vec<_>>()
             .join(",");
 
-        let url = if ids.len() == 1 {
-            format!("{}?filter={}", self.voucher_api_url, filter_expr)
+        let query = if ids.len() == 1 {
+            [("filter", &*filter_expr)]
         } else {
-            format!("{}?filter=or({})", self.voucher_api_url, filter_expr)
+            [("filter", &*format!("or({})", filter_expr))]
         };
 
-        self.make_request(RequestType::Delete, &url, None::<&()>, None::<&()>)
-            .await
+        self.make_request(
+            RequestType::Delete,
+            &self.voucher_api_url,
+            Some(&query),
+            None::<&()>,
+        )
+        .await
     }
 
     pub async fn delete_expired_vouchers(&self) -> Result<DeleteResponse, StatusCode> {
-        let url = format!("{}?filter=expired.eq(true)", self.voucher_api_url);
-        self.make_request(RequestType::Delete, &url, None::<&()>, None::<&()>)
-            .await
+        let query = [("filter", "expired.eq(true)")];
+        self.make_request(
+            RequestType::Delete,
+            &self.voucher_api_url,
+            Some(&query),
+            None::<&()>,
+        )
+        .await
     }
 
     pub async fn delete_expired_rolling_vouchers(&self) -> Result<DeleteResponse, StatusCode> {
-        let url = format!(
-            "{}?filter=and(expired.eq(true),name.like('{}*'))",
-            self.voucher_api_url,
-            utf8_percent_encode(ROLLING_VOUCHER_NAME_PREFIX, FRAGMENT)
-        );
-        self.make_request(RequestType::Delete, &url, None::<&()>, None::<&()>)
-            .await
+        let query = [(
+            "filter",
+            &*format!(
+                "and(expired.eq(true),name.like('{}*'))",
+                utf8_percent_encode(ROLLING_VOUCHER_NAME_PREFIX, FRAGMENT)
+            ),
+        )];
+        self.make_request(
+            RequestType::Delete,
+            &self.voucher_api_url,
+            Some(&query),
+            None::<&()>,
+        )
+        .await
     }
 }
