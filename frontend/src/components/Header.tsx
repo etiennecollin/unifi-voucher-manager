@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import ThemeSwitcher from "@/components/utils/ThemeSwitcher";
 import WifiQrModal from "@/components/modals/WifiQrModal";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useGlobal } from "@/contexts/GlobalContext";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
