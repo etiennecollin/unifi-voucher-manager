@@ -1,4 +1,5 @@
 import {
+  SitesGetResponse,
   Voucher,
   VoucherCreateData,
   VoucherCreatedResponse,
@@ -15,11 +16,30 @@ function removeNullUndefined<T extends Record<string, any>>(obj: T): T {
   ) as T;
 }
 
-async function call<T>(endpoint: string, opts: RequestInit = {}) {
-  const res = await fetch(`/rust-api/${endpoint}`, {
-    headers: { "Content-Type": "application/json" },
+async function call<T>(
+  endpoint: string,
+  opts: RequestInit = {},
+  includeSite = true,
+) {
+  const path = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = new URL(`/rust-api${path}`, window.location.origin);
+
+  if (includeSite) {
+    const site = localStorage.getItem("site");
+
+    if (site) {
+      url.searchParams.set("siteName", site);
+    }
+  }
+
+  const headers = new Headers(opts.headers);
+  headers.set("Content-Type", "application/json");
+
+  const res = await fetch(url.toString(), {
     ...opts,
+    headers,
   });
+
   if (!res.ok) {
     const error = new Error(res.statusText);
     (error as any).status = res.status;
@@ -47,6 +67,8 @@ export const MIN_VOUCHER_UPLOAD_KBPS = 2;
 export const MAX_VOUCHER_UPLOAD_KBPS = 100_000;
 
 export const api = {
+  getSites: () => call<SitesGetResponse>("/sites", {}, false),
+
   getAllVouchers: () => call<VoucherGetResponse>("/vouchers"),
 
   getRollingVoucher: () => call<Voucher>("/vouchers/rolling"),

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import SiteSwitcher from "./utils/SiteSwitcher";
 import ThemeSwitcher from "@/components/utils/ThemeSwitcher";
 import WifiQrModal from "@/components/modals/WifiQrModal";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -53,6 +54,9 @@ export default function Header() {
             <span className="block sm:hidden">UVM</span>
             <span className="hidden sm:block">UniFi Voucher Manager</span>
           </h1>
+        </div>
+        <div className="flex-center px-auto">
+          <SiteSwitcher />
         </div>
         <div className="flex-center gap-3">
           <button
