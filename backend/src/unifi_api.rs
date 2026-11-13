@@ -27,7 +27,7 @@ enum RequestType {
 pub struct UnifiAPI<'a> {
     client: Client,
     sites_api_url: String,
-    voucher_api_url: String,
+    sites: Vec<SiteConfig>,
     environment: &'a Environment,
 }
 
@@ -58,29 +58,82 @@ impl<'a> UnifiAPI<'a> {
         let mut unifi_api = Self {
             client,
             sites_api_url: format!("{}/{}", environment.unifi_controller_url, UNIFI_API_ROUTE),
-            voucher_api_url: String::new(),
+            sites: environment.unifi_sites.clone(),
             environment,
         };
 
-        let site_id = match environment.unifi_site_id.to_lowercase().as_str() {
-            "default" => {
-                info!("Trying to fetch the default site ID from UniFi controller...");
-                let id = match unifi_api.get_default_site_id().await {
-                    Ok(id) => id,
-                    Err(e) => {
-                        return Err(format!("Failed to fetch default site ID: {e}"));
-                    }
-                };
-                info!("Default site ID found: {}", id);
-                id
-            }
-            _ => environment.unifi_site_id.clone(),
-        };
+        // Replace sites with ID "default" to the default site ID
+        if unifi_api.sites.iter().any(|site| site.id == "default") {
+            info!("Trying to fetch the default site ID from UniFi controller...");
 
-        unifi_api.voucher_api_url =
-            format!("{}/{}/hotspot/vouchers", unifi_api.sites_api_url, site_id);
+            let default_id = unifi_api
+                .get_default_site_id()
+                .await
+                .map_err(|e| format!("Failed to fetch default site ID: {e}"))?;
+
+            info!("Default site ID found: {}", default_id);
+
+            for site in &mut unifi_api.sites {
+                if site.id == "default" {
+                    site.id = default_id.clone();
+                }
+            }
+        }
+
+        // Ensure sites are available
+        let available_sites = &unifi_api
+            .get_available_sites()
+            .await
+            .map_err(|e| format!("Failed to fetch available of sites: {e}",))?;
+        for site in &unifi_api.sites {
+            if !available_sites
+                .iter()
+                .any(|available_site| available_site.id.eq_ignore_ascii_case(&site.id))
+            {
+                return Err(format!(
+                    "Site named {} with ID {} could not be found",
+                    site.name, site.id
+                ));
+            }
+        }
+
+        // If no sites were configured, use the available ones
+        if unifi_api.sites.is_empty() {
+            unifi_api.sites = available_sites
+                .iter()
+                .map(|site| SiteConfig {
+                    name: site.name.clone(),
+                    id: site.id.clone(),
+                })
+                .collect();
+            info!("No sites configured, falling back to managing all available sites",);
+        }
+
+        info!(
+            "Managing sites:\n  - {}",
+            unifi_api
+                .sites
+                .iter()
+                .map(|site| format!("{} : {}", site.name, site.id))
+                .collect::<Vec<_>>()
+                .join("\n  - ")
+        );
 
         Ok(unifi_api)
+    }
+
+    fn get_voucher_api_url(&self, site_name: &str) -> String {
+        let site = self.sites
+            .iter()
+            .find(|site| site.name.eq_ignore_ascii_case(site_name.trim()))
+            .unwrap_or_else(||{
+                error!("Failed to find site {site_name} in configured sites, falling back to default site");
+                error!("{:?}", self.sites);
+                self.sites.first().expect(
+                    "There should at least be the default site in the sites list at this point",
+                )
+            });
+        format!("{}/{}/hotspot/vouchers", self.sites_api_url, site.id)
     }
 
     fn format_unifi_date(&self, rfc3339_string: &str) -> String {
@@ -190,6 +243,19 @@ impl<'a> UnifiAPI<'a> {
         })
     }
 
+    async fn get_available_sites(&self) -> Result<Vec<Site>, StatusCode> {
+        let result: GetSitesResponse = self
+            .make_request(
+                RequestType::Get,
+                &self.sites_api_url,
+                None::<&()>,
+                None::<&()>,
+            )
+            .await?;
+
+        Ok(result.data)
+    }
+
     async fn get_default_site_id(&self) -> Result<String, StatusCode> {
         let query = [(
             "filter",
@@ -206,9 +272,6 @@ impl<'a> UnifiAPI<'a> {
 
         if result.data.is_empty() {
             error!("No default site found on the UniFi controller");
-            error!(
-                "Please manually set the `UNIFI_SITE_ID` environment variable to a valid site ID."
-            );
             return Err(StatusCode::NOT_FOUND);
         }
 
@@ -217,14 +280,19 @@ impl<'a> UnifiAPI<'a> {
         Ok(id)
     }
 
+    pub fn get_configured_sites_names(&self) -> Vec<String> {
+        self.sites.iter().map(|site| site.name.clone()).collect()
+    }
+
     pub async fn get_vouchers(
         &self,
+        site_name: &str,
         request: &VouchersGetRequest,
     ) -> Result<VouchersGetResponse, StatusCode> {
         let mut result: VouchersGetResponse = self
             .make_request(
                 RequestType::Get,
-                &self.voucher_api_url,
+                self.get_voucher_api_url(site_name).as_str(),
                 Some(request),
                 None::<&()>,
             )
@@ -233,7 +301,10 @@ impl<'a> UnifiAPI<'a> {
         Ok(result)
     }
 
-    pub async fn get_all_vouchers(&self) -> Result<VouchersGetResponse, StatusCode> {
+    pub async fn get_all_vouchers(
+        &self,
+        site_name: &str,
+    ) -> Result<VouchersGetResponse, StatusCode> {
         const PAGE_SIZE: u32 = 1000;
 
         let mut request = VouchersGetRequest {
@@ -249,7 +320,7 @@ impl<'a> UnifiAPI<'a> {
             let page: VouchersGetResponse = self
                 .make_request(
                     RequestType::Get,
-                    &self.voucher_api_url,
+                    self.get_voucher_api_url(site_name).as_str(),
                     Some(&request),
                     None::<&()>,
                 )
@@ -281,8 +352,11 @@ impl<'a> UnifiAPI<'a> {
         })
     }
 
-    pub async fn get_rolling_voucher(&self) -> Result<Option<Voucher>, StatusCode> {
-        let response = self.get_all_vouchers().await?;
+    pub async fn get_rolling_voucher(
+        &self,
+        site_name: &str,
+    ) -> Result<Option<Voucher>, StatusCode> {
+        let response = self.get_all_vouchers(site_name).await?;
 
         // Find the most recent rolling voucher that is unused
         let rolling = response
@@ -301,8 +375,8 @@ impl<'a> UnifiAPI<'a> {
         Ok(rolling)
     }
 
-    pub async fn get_newest_voucher(&self) -> Result<Voucher, StatusCode> {
-        let response = self.get_all_vouchers().await?;
+    pub async fn get_newest_voucher(&self, site_name: &str) -> Result<Voucher, StatusCode> {
+        let response = self.get_all_vouchers(site_name).await?;
 
         if response.data.is_empty() {
             warn!("No vouchers found when fetching the newest voucher");
@@ -323,8 +397,12 @@ impl<'a> UnifiAPI<'a> {
         Ok(newest)
     }
 
-    pub async fn get_voucher_details(&self, id: String) -> Result<Voucher, StatusCode> {
-        let url = format!("{}/{}", self.voucher_api_url, id);
+    pub async fn get_voucher_details(
+        &self,
+        site_name: &str,
+        id: String,
+    ) -> Result<Voucher, StatusCode> {
+        let url = format!("{}/{}", self.get_voucher_api_url(site_name).as_str(), id);
 
         let mut result: Voucher = self
             .make_request(RequestType::Get, &url, None::<&()>, None::<&()>)
@@ -336,12 +414,13 @@ impl<'a> UnifiAPI<'a> {
 
     pub async fn create_voucher(
         &self,
+        site_name: &str,
         request: &VouchersCreateRequest,
     ) -> Result<VouchersCreateResponse, StatusCode> {
         let mut result: VouchersCreateResponse = self
             .make_request(
                 RequestType::Post,
-                &self.voucher_api_url,
+                self.get_voucher_api_url(site_name).as_str(),
                 None::<&()>,
                 Some(request),
             )
@@ -350,8 +429,12 @@ impl<'a> UnifiAPI<'a> {
         Ok(result)
     }
 
-    pub async fn check_rolling_voucher_ip(&self, ip: &str) -> Result<bool, StatusCode> {
-        let response = self.get_all_vouchers().await?;
+    pub async fn check_rolling_voucher_ip(
+        &self,
+        site_name: &str,
+        ip: &str,
+    ) -> Result<bool, StatusCode> {
+        let response = self.get_all_vouchers(site_name).await?;
 
         // Find a rolling voucher that contains the given IP address
         let rolling = response
@@ -367,7 +450,11 @@ impl<'a> UnifiAPI<'a> {
         Ok(rolling.is_some())
     }
 
-    pub async fn create_rolling_voucher(&self, ip: &str) -> Result<Voucher, StatusCode> {
+    pub async fn create_rolling_voucher(
+        &self,
+        site_name: &str,
+        ip: &str,
+    ) -> Result<Voucher, StatusCode> {
         let request = VouchersCreateRequest {
             count: 1,
             name: format!(
@@ -384,7 +471,7 @@ impl<'a> UnifiAPI<'a> {
         };
 
         let rolling = self
-            .create_voucher(&request)
+            .create_voucher(site_name, &request)
             .await?
             .vouchers
             .first()
@@ -398,6 +485,7 @@ impl<'a> UnifiAPI<'a> {
 
     pub async fn delete_vouchers_by_ids(
         &self,
+        site_name: &str,
         ids: Vec<String>,
     ) -> Result<DeleteResponse, StatusCode> {
         if ids.is_empty() || (ids.len() == 1 && ids[0].is_empty()) {
@@ -420,25 +508,31 @@ impl<'a> UnifiAPI<'a> {
 
         self.make_request(
             RequestType::Delete,
-            &self.voucher_api_url,
+            self.get_voucher_api_url(site_name).as_str(),
             Some(&query),
             None::<&()>,
         )
         .await
     }
 
-    pub async fn delete_expired_vouchers(&self) -> Result<DeleteResponse, StatusCode> {
+    pub async fn delete_expired_vouchers(
+        &self,
+        site_name: &str,
+    ) -> Result<DeleteResponse, StatusCode> {
         let query = [("filter", "expired.eq(true)")];
         self.make_request(
             RequestType::Delete,
-            &self.voucher_api_url,
+            self.get_voucher_api_url(site_name).as_str(),
             Some(&query),
             None::<&()>,
         )
         .await
     }
 
-    pub async fn delete_expired_rolling_vouchers(&self) -> Result<DeleteResponse, StatusCode> {
+    pub async fn delete_expired_rolling_vouchers(
+        &self,
+        site_name: &str,
+    ) -> Result<DeleteResponse, StatusCode> {
         let query = [(
             "filter",
             &*format!(
@@ -446,9 +540,10 @@ impl<'a> UnifiAPI<'a> {
                 utf8_percent_encode(ROLLING_VOUCHER_NAME_PREFIX, FRAGMENT)
             ),
         )];
+
         self.make_request(
             RequestType::Delete,
-            &self.voucher_api_url,
+            self.get_voucher_api_url(site_name).as_str(),
             Some(&query),
             None::<&()>,
         )
