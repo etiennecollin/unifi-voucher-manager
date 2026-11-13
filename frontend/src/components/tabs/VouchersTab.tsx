@@ -3,13 +3,13 @@
 import Spinner from "@/components/utils/Spinner";
 import VoucherCard from "@/components/VoucherCard";
 import VoucherModal from "@/components/modals/VoucherModal";
+import { PrintMode } from "@/types/print";
 import { Voucher } from "@/types/voucher";
 import { api } from "@/utils/api";
 import { notify } from "@/utils/notifications";
+import { storePrintJob } from "@/utils/print";
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PrintMode } from "@/types/print";
-import { storePrintJob } from "@/utils/print";
 
 export default function VouchersTab() {
   const [loading, setLoading] = useState(true);
