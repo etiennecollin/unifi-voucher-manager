@@ -34,6 +34,7 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 
 ### 🎫 Voucher Management & WiFi QR Code
 
+- **Multiple Sites** - Manage multiple UniFi sites with the same UVM instance
 - **Quick Create** - Generate guest vouchers with preset durations (1 hour to 1 week)
 - **Custom Create** - Full control over voucher parameters:
   - Custom name
@@ -91,10 +92,10 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 
 ### Without Docker
 
-1. **Install the dependencies**
-   - `rust >= 1.88.0`
-   - `nodejs >= 24.3.0`
-   - `npm >= 11.4.2`
+1. **Install the dependencies** (older versions may work, but are not tested)
+   - `rust >= 1.98.0`
+   - `nodejs >= 26.13.0`
+   - `npm >= 12.2.2`
 2. **Clone the repository**
    ```bash
    git clone https://github.com/etiennecollin/unifi-voucher-manager
@@ -119,7 +120,7 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
    ```
 
 5. **Access the interface**
-   - Open your browser to `http://localhost:3000`.
+   - Open your browser to `http://localhost:3000` or `http://127.0.0.1:3000`.
 
 ## ⚙️ Configuration
 
@@ -129,6 +130,17 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 2. **Navigate to Settings -> Control Plane -> Integration**
 3. **Create a new API key** by giving it a name and an expiration.
 4. **Find your Site ID** in the controller URL or on [unifi.ui.com](https://unifi.ui.com)
+
+> [!NOTE]
+> A site ID should have this format `XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX`.
+>
+> If you are unable to find your site ID, you may run the following command to get it through the UniFi network API:
+>
+> ```sh
+> curl -k -X GET 'https://<your-unifi-controller-address>/proxy/network/integrations/v1/sites' -H 'X-API-KEY: <your-api-key>' -H 'Accept: application/json'
+> ```
+>
+> Make sure to substitute the right address and API key.
 
 ### Rolling Vouchers and Kiosk Page
 
