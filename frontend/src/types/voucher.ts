@@ -1,3 +1,7 @@
+export interface SitesGetResponse {
+  siteNames: string[];
+}
+
 export interface Voucher {
   id: string;
   createdAt: string;
