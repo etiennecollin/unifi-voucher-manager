@@ -1,8 +1,8 @@
 # ==============================================================================
 # Base images
 # ==============================================================================
-FROM node:26.5-alpine AS node-base
-FROM rust:1.97-alpine AS rust-base
+FROM node:26.13-alpine AS node-base
+FROM rust:1.100-alpine AS rust-base
 
 # ==============================================================================
 # Backend dependencies
@@ -73,7 +73,7 @@ RUN \
 # ==============================================================================
 # Runner
 # ==============================================================================
-FROM alpine:3.22 AS runtime
+FROM alpine:3.24 AS runtime
 RUN apk add --no-cache ca-certificates wget nodejs
 
 WORKDIR /app
