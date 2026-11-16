@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import SiteSwitcher from "@/components/utils/SiteSwitcher";
 import Spinner from "@/components/utils/Spinner";
 import WifiQr from "@/components/utils/WifiQr";
 import { TriState } from "@/types/state";
 import { Voucher } from "@/types/voucher";
 import { api } from "@/utils/api";
 import { formatCode } from "@/utils/format";
+import { useCallback, useEffect, useState } from "react";
 import { useGlobal } from "@/contexts/GlobalContext";
 
 export default function KioskPage() {
@@ -72,6 +73,11 @@ export default function KioskPage() {
   }, [voucher, state, wifiConfig, wifiString]);
 
   return (
-    <main className="flex-center h-screen w-full px-4">{renderContent()}</main>
+    <main className="flex-center flex-col h-screen w-full px-4">
+      <div className="flex-center flex-1 w-full">{renderContent()}</div>
+      <div className="flex-center pb-4 w-full">
+        <SiteSwitcher />
+      </div>
+    </main>
   );
 }
