@@ -1,5 +1,15 @@
 @import "../globals.css";
 
+@utility text-xxs {
+  @apply text-[10px];
+}
+@utility boxed {
+  @apply border-1 border-black p-1 w-full;
+}
+@utility top-border {
+  @apply border-t-2 border-black pt-2 w-full;
+}
+
 /* Print page settings */
 @media print {
   @page {
@@ -18,50 +28,100 @@
   }
 }
 
+/* Layout */
 .print-wrapper {
-  @apply p-3 m-0 p-0 bg-white text-black font-mono text-sm leading-snug;
+  @apply p-1 m-0 bg-white text-black font-mono text-sm leading-snug;
 }
-
 .print-list {
-  @apply flex flex-col gap-3 max-w-[80mm] mx-auto;
+  @apply flex flex-col gap-1 max-w-[80mm] mx-auto;
 }
 .print-grid {
-  @apply grid gap-3 grid-cols-[repeat(auto-fill,minmax(250px,1fr))];
+  @apply grid gap-1 grid-cols-[repeat(auto-fill,minmax(250px,1fr))];
 }
 
+/* Voucher */
 .print-voucher {
-  @apply border-2 border-black p-3;
+  @apply flex-center flex-col gap-2 border-2 border-black px-3 py-2 w-full;
 }
 
+/* Voucher header */
 .print-header {
-  @apply text-center border-b-2 border-black pb-1;
+  @apply flex-center flex-col gap-2 text-center w-full;
 }
 .print-title {
   @apply font-bold text-lg;
 }
-
 .print-voucher-code {
-  @apply text-xl font-bold text-center border-2 border-black p-1 my-3;
+  @apply text-xl font-bold boxed;
+}
+.print-name {
+  @apply flex flex-col boxed border-dashed;
+}
+.print-name-label {
+  @apply text-xs font-semibold uppercase tracking-wider;
+}
+.print-name-value {
+  @apply text-xxs break-words wrap-anywhere;
 }
 
+/* Voucher info */
+.print-info {
+  @apply flex flex-col w-full;
+  flex: 1 1 1fr;
+}
 .print-info-row {
-  @apply flex justify-between my-1.5 border-b border-dotted border-black;
+  @apply flex justify-between gap-1 border-b border-dotted border-black;
 }
 .print-label {
-  @apply font-bold flex-1;
+  @apply shrink-0 font-semibold;
 }
 .print-value {
-  @apply flex-1 text-right;
+  @apply min-w-0 flex-1 text-right;
 }
 
+/* WiFi connection section */
 .print-qr-section {
-  @apply flex flex-col items-center justify-center my-3 border-t-2 border-black pt-2;
+  @apply flex-center-between flex-col gap-1 top-border;
 }
-.print-qr-section .print-qr-text {
-  @apply text-center text-xs mt-2 break-all;
+.print-qr-title {
+  @apply text-xs font-bold uppercase tracking-widest;
+}
+.print-network-details {
+  @apply boxed border-dashed text-xxs;
+}
+.print-credential {
+  @apply flex justify-between gap-1 py-1;
+}
+.print-credential:first-child {
+  @apply pb-1 pt-0;
+}
+.print-credential:last-child {
+  @apply pb-0 pt-1;
+}
+.print-credential + .print-credential {
+  @apply border-t border-dashed border-black;
+}
+.print-credential-label {
+  @apply shrink-0 font-semibold uppercase tracking-wide;
+}
+.print-credential-value {
+  @apply min-w-0 flex-1 text-right wrap-anywhere break-words;
+}
+.print-network-note {
+  @apply font-semibold uppercase tracking-wider text-center border-t border-dashed border-black pt-1;
 }
 
-/* Footer */
+/* Voucher metadata footer */
 .print-footer {
-  @apply text-left border-t-2 border-black pt-2 text-xs;
+  @apply flex flex-col gap-1 top-border text-xxs;
+}
+.print-footer-item {
+  @apply flex flex-col;
+  flex: 1 1 1fr;
+}
+.print-footer-label {
+  @apply font-semibold uppercase tracking-wide;
+}
+.print-footer-value {
+  @apply wrap-anywhere break-words;
 }
