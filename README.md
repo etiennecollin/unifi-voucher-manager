@@ -6,15 +6,15 @@
 UVM is a modern, touch-friendly web application for managing WiFi vouchers on UniFi controllers.
 Perfect for businesses, cafes, hotels, and home networks that need to provide guest WiFi access.
 
-![WiFi Voucher Manager](./assets/view.png)
+![Unifi Voucher Manager](./assets/view.png)
 
 <!-- vim-markdown-toc GFM -->
 
 - [✨ Features](#-features)
-  - [🎫 Voucher Management & WiFi QR Code](#-voucher-management--wifi-qr-code)
+  - [Voucher Management & WiFi QR Code](#-voucher-management--wifi-qr-code)
   - [Kiosk Display](#kiosk-display)
-  - [🎨 Modern Interface](#-modern-interface)
-  - [🔧 Technical Features](#-technical-features)
+  - [Modern Interface](#-modern-interface)
+  - [Technical Features](#-technical-features)
 - [🚀 Quick Start](#-quick-start)
   - [Using Docker Compose (Recommended)](#using-docker-compose-recommended)
   - [Without Docker](#without-docker)
@@ -32,9 +32,12 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 
 ## ✨ Features
 
-### 🎫 Voucher Management & WiFi QR Code
+### Voucher Management & WiFi QR Code
 
 - **Multiple Sites** - Manage multiple UniFi sites with the same UVM instance
+- **Browse Vouchers** - Browse and search existing vouchers by name
+- **Bulk Operations** - Select and delete multiple vouchers at once
+- **Print Vouchers** - Print vouchers in either list or grid format; thermal printers friendly
 - **Quick Create** - Generate guest vouchers with preset durations (1 hour to 1 week)
 - **Custom Create** - Full control over voucher parameters:
   - Custom name
@@ -42,12 +45,14 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
   - Guest count limits
   - Data usage limits
   - Upload/download speed limits
-- **Browse Vouchers** - Browse and search existing vouchers by name
-- **Bulk Operations** - Select and delete multiple vouchers at once
-- **Print Vouchers** - Print vouchers in either list or grid format; thermal printers friendly
 - **Auto-cleanup** - Remove expired vouchers with a single click
 - **QR Code** - Easily connect guests to your network
 - **Rolling Vouchers** - Automatically generate a voucher for the next guest when the current one gets used
+
+|                                          |                                            |
+| ---------------------------------------- | ------------------------------------------ |
+| ![Detailed view](./assets/details.png)   | ![Printing](./assets/print.png)            |
+| ![Quick create view](./assets/quick.png) | ![Custom create view](./assets/custom.png) |
 
 ### Kiosk Display
 
@@ -57,7 +62,9 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 - **Current Voucher**: The active rolling voucher code
 - **Real-time Updates**: Automatically refreshes when the rolling voucher changes
 
-### 🎨 Modern Interface
+![Kiosk view](./assets/kiosk.png)
+
+### Modern Interface
 
 - **Touch-Friendly** – Optimized for tablet, mobile, and desktop
 - **Dark/Light Mode** – Follows system preference, with manual override
@@ -66,7 +73,7 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 - **Real-time Notifications** - Instant feedback for all operations
 - **Custom SVG Logo** - Display your own logo on the main page
 
-### 🔧 Technical Features
+### Technical Features
 
 - **Docker Ready** - Easy deployment with Docker Compose and included healthcheck
 - **UniFi Integration** - Direct API connection to UniFi controllers
