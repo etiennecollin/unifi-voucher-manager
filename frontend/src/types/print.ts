@@ -1,4 +1,4 @@
-import { Voucher } from "./voucher";
+import { Voucher, VoucherCreateData } from "./voucher";
 
 export type PrintMode = "list" | "grid";
 
@@ -19,3 +19,8 @@ export type PrintConfig = {
   showId: boolean;
   showPrintTime: boolean;
 };
+
+export interface QuickVoucherConfig extends Omit<
+  VoucherCreateData,
+  "count" | "name" | "timeLimitMinutes"
+> {}

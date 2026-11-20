@@ -14,6 +14,10 @@ function withDefaults(config: Partial<RuntimeConfig>): RuntimeConfig {
       ...DEFAULT_RUNTIME_CONFIG.PRINT_CONFIG,
       ...config.PRINT_CONFIG,
     },
+    QUICK_VOUCHER_CONFIG: {
+      ...DEFAULT_RUNTIME_CONFIG.QUICK_VOUCHER_CONFIG,
+      ...config.QUICK_VOUCHER_CONFIG,
+    },
   };
 }
 
