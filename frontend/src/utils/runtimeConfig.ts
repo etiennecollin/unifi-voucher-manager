@@ -15,8 +15,6 @@ import {
 } from "./api";
 import { PrintConfig, QuickVoucherConfig } from "@/types/print";
 
-let cachedConfig: RuntimeConfig | null = null;
-
 function withDefaults(config: Partial<RuntimeConfig>): RuntimeConfig {
   return {
     ...DEFAULT_RUNTIME_CONFIG,
@@ -87,6 +85,9 @@ function isValidPrintConfig(config: PrintConfig): boolean {
     typeof config.showPrintTime === "boolean"
   );
 }
+
+let cachedConfig: RuntimeConfig | null = null;
+
 export function getRuntimeConfig(): RuntimeConfig {
   if (cachedConfig) {
     return cachedConfig;
@@ -129,9 +130,11 @@ export function getRuntimeConfig(): RuntimeConfig {
       };
     }
 
+    cachedConfig = config;
     return config;
   } catch (error) {
     console.warn("Unable to read runtime config:", error);
+    cachedConfig = DEFAULT_RUNTIME_CONFIG;
     return DEFAULT_RUNTIME_CONFIG;
   }
 }
