@@ -56,45 +56,61 @@ function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
     <div className="print-voucher">
       <div className="print-header">
         <div className="print-title">WiFi Access Voucher</div>
+        <div className="print-voucher-code">{formatCode(voucher.code)}</div>
+        {printConfig.showName && voucher.name && (
+          <div className="print-name">
+            <span className="print-name-label">VOUCHER NAME</span>
+            <span className="print-name-value">{voucher.name}</span>
+          </div>
+        )}
       </div>
 
-      <div className="print-voucher-code">{formatCode(voucher.code)}</div>
-
-      {fields.map(
-        (field) =>
-          field.enabled && (
-            <div
-              key={`${voucher.id}:${field.label}`}
-              className="print-info-row"
-            >
-              <span className="print-label">{field.label}:</span>
-              <span className="print-value">{field.value}</span>
-            </div>
-          ),
-      )}
+      <div className="print-info">
+        {fields.map(
+          (field) =>
+            field.enabled && (
+              <div
+                key={`${voucher.id}:${field.label}`}
+                className="print-info-row"
+              >
+                <span className="print-label">{field.label}:</span>
+                <span className="print-value">{field.value}</span>
+              </div>
+            ),
+        )}
+      </div>
 
       {wifiConfig && wifiConfig.ssid && (
         <div className="print-qr-section">
           {wifiString && (
             <>
-              <div className="font-bold mb-2">Scan to Connect</div>
+              <div className="print-qr-title">Scan to Connect</div>
               <WifiQr
-                sizeRatio={0.85}
+                className="w-full h-50"
+                sizeRatio={0.88}
                 imageSrc={printConfig.showLogo ? undefined : ""}
               />
             </>
           )}
-          <div className="print-qr-text">
-            <strong>Network:</strong> {wifiConfig.ssid}
-            <br />
-            {wifiConfig.type === "nopass" ? (
-              "No Password"
-            ) : (
-              <>
-                <strong>Password:</strong> {wifiConfig.password}
-              </>
+
+          <div className="print-network-details">
+            <div className="print-credential">
+              <span className="print-credential-label">Network</span>
+              <span className="print-credential-value">{wifiConfig.ssid}</span>
+            </div>
+
+            <div className="print-credential">
+              <span className="print-credential-label">Password</span>
+              <span className="print-credential-value">
+                {wifiConfig.type === "nopass"
+                  ? "No password (Open Network)"
+                  : wifiConfig.password}
+              </span>
+            </div>
+
+            {wifiConfig.hidden && (
+              <div className="print-network-note">Hidden Network</div>
             )}
-            {wifiConfig.hidden && <div>(Hidden Network)</div>}
           </div>
         </div>
       )}
@@ -102,14 +118,21 @@ function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
       {(printConfig.showId || printConfig.showPrintTime) && (
         <div className="print-footer">
           {printConfig.showId && (
-            <div>
-              <strong className="text-sm">ID:</strong> {voucher.id}
+            <div className="print-footer-item">
+              <span className="print-footer-label">Voucher ID</span>
+              <span className="print-footer-value">{voucher.id}</span>
             </div>
           )}
+
           {printConfig.showPrintTime && (
-            <div>
-              <strong className="text-sm">Printed:</strong>{" "}
-              {new Date().toUTCString()}
+            <div className="print-footer-item">
+              <span className="print-footer-label">Printed On</span>
+              <span className="print-footer-value">
+                {new Date().toLocaleString(undefined, {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
+              </span>
             </div>
           )}
         </div>

@@ -66,27 +66,22 @@ export default function WifiQr({
     : undefined;
 
   return (
-    <div ref={containerRef} className={`flex-center ${className}`}>
-      <div className="flex-center flex-col gap-4 text-center">
-        {wifiConfig && wifiString ? (
-          <>
-            <QRCodeSVG
-              value={wifiString}
-              size={qrSize}
-              level="H"
-              bgColor="transparent"
-              fgColor="currentColor"
-              title={`Wi-Fi access: ${wifiConfig.ssid}`}
-              imageSettings={imageSettings}
-            />
-            <p className="text-sm text-muted">
-              Scan to join <strong>{wifiConfig.ssid}</strong>
-            </p>
-          </>
-        ) : (
-          <p className="text-sm text-muted">No Wi‑Fi credentials configured.</p>
-        )}
-      </div>
+    <div ref={containerRef} className={`flex-center ${className} text-center`}>
+      {wifiConfig && wifiString ? (
+        <>
+          <QRCodeSVG
+            value={wifiString}
+            size={qrSize}
+            level="H"
+            bgColor="transparent"
+            fgColor="currentColor"
+            title={`Wi-Fi access: ${wifiConfig.ssid}`}
+            imageSettings={imageSettings}
+          />
+        </>
+      ) : (
+        <p className="text-sm text-muted">No Wi‑Fi credentials configured.</p>
+      )}
     </div>
   );
 }

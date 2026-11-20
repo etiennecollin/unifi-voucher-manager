@@ -9,6 +9,7 @@ export type PrintJob = {
 };
 
 export type PrintConfig = {
+  showName: boolean;
   showLogo: boolean;
   showDuration: boolean;
   showMaxGuests: boolean;
