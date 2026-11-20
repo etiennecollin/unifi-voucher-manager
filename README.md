@@ -211,7 +211,9 @@ Make sure to configure the required variables. The optional variables generally 
   - **Description**: Whether your UniFi controller uses a valid SSL certificate. This should normally be set to `true`, especially if you access the controller through a reverse proxy or another setup that provides trusted certificates (e.g., Let's Encrypt). **If you connect directly to the controller’s IP address (which usually serves a self-signed certificate), you may need to set this to `false`.**
   - **Example**: `true` (default)
 - **`UNIFI_SITES`: `JSON object`** (_Optional_)
-  - **Description**: A list of UniFi sites to manage. If omitted, all available sites are managed. Set a site's `id` to `default` to use the default site configured in your UniFi controller.
+  - **Description**: A list of UniFi sites to manage. If omitted, all available sites are managed.
+    - `name` shall contain a non-empty string representing a user-defined site name.
+    - `id` shall either be `default`, in which case default site configured in your UniFi controller, or a valid UniFi site identifier.
   - **Example**: `[{"name":"Default","id":"default"}]` (default)
   - **Example**: `[{"name":"Site 1","id":"site-1-id"},{"name":"Site 2","id":"site-2-id"}]`
 
@@ -267,7 +269,15 @@ Make sure to configure the required variables. The optional variables generally 
   - **Example**: `false` (default)
 - **`PRINT_CONFIG`: `JSON object`** (_Optional_)
   - **Description**: Controls which fields are included when printing vouchers. Any omitted fields default to `true`. Keep in mind the string must contain valid JSON.
+    - All values are `bool` that take either the value `true` or `false`.
   - **Example**: `{"showName":true,"showLogo":true,"showDuration":true,"showMaxGuests":true,"showDataUsageLimit":true,"showRxRateLimit":true,"showTxRateLimit":true,"showId":true,"showPrintTime":true}` (default)
+- **`QUICK_VOUCHER_CONFIG`: `JSON object`** (_Optional_)
+  - **Description**: Controls how vouchers created from the "Quick Create" tab are configured. Keep in mind the string must contain valid JSON.
+    - `authorizedGuestLimit` shall either be `null` (unlimited) or a positive number between 1 and 1000 inclusively.
+    - `dataUsageLimitMBytes` shall either be `null` (unlimited) or a positive number between 1 and 1048576 inclusively.
+    - `rxRateLimitKbps` and `txRateLimitKbps` shall either be `null` (unlimited) or a positive number between 2 and 100000 inclusively.
+  - **Example**: `{"authorizedGuestLimit":1,"dataUsageLimitMBytes":null,"rxRateLimitKbps":null,"txRateLimitKbps":null}` (default)
+  - **Example**: `{"authorizedGuestLimit":10,"dataUsageLimitMBytes":1024,"rxRateLimitKbps":30720,"txRateLimitKbps":10240}`
 
 ## 🐛 Troubleshooting
 

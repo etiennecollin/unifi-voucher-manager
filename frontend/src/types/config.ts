@@ -1,4 +1,4 @@
-import { PrintConfig } from "@/types/print";
+import { PrintConfig, QuickVoucherConfig } from "@/types/print";
 
 export type RuntimeConfig = {
   IS_LOGO_INVERTIBLE: boolean;
@@ -7,6 +7,7 @@ export type RuntimeConfig = {
   WIFI_TYPE?: string;
   WIFI_HIDDEN?: string;
   PRINT_CONFIG: PrintConfig;
+  QUICK_VOUCHER_CONFIG: QuickVoucherConfig;
 };
 
 export const DEFAULT_RUNTIME_CONFIG: RuntimeConfig = {
@@ -21,5 +22,11 @@ export const DEFAULT_RUNTIME_CONFIG: RuntimeConfig = {
     showTxRateLimit: true,
     showId: true,
     showPrintTime: true,
+  },
+  QUICK_VOUCHER_CONFIG: {
+    authorizedGuestLimit: 1,
+    dataUsageLimitMBytes: null,
+    rxRateLimitKbps: null,
+    txRateLimitKbps: null,
   },
 };

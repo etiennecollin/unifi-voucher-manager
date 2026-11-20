@@ -5,10 +5,12 @@ import { Voucher, VoucherCreateData } from "@/types/voucher";
 import { api } from "@/utils/api";
 import { notify } from "@/utils/notifications";
 import { useCallback, useState, SubmitEvent } from "react";
+import { useGlobal } from "@/contexts/GlobalContext";
 
 export default function QuickCreateTab() {
   const [loading, setLoading] = useState<boolean>(false);
   const [newVoucher, setNewVoucher] = useState<Voucher | null>(null);
+  const { runtimeConfig } = useGlobal();
 
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
@@ -21,7 +23,7 @@ export default function QuickCreateTab() {
       count: 1,
       name: String(data.get("name")),
       timeLimitMinutes: Number(data.get("duration")),
-      authorizedGuestLimit: 1,
+      ...runtimeConfig.QUICK_VOUCHER_CONFIG,
     };
 
     try {

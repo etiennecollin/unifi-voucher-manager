@@ -6,10 +6,10 @@ set -e
 mkdir -p /app/frontend/public
 
 # Build runtime-config.js containing only env vars that are defined and non-empty.
-node - <<'NODE'
-const fs = require('fs');
-const outPath = '/app/frontend/public/runtime-config.json';
-const keys = ['WIFI_SSID','WIFI_PASSWORD','WIFI_TYPE','WIFI_HIDDEN','PRINT_CONFIG',"IS_LOGO_INVERTIBLE"];
+node - <<"NODE"
+const fs = require("fs");
+const outPath = "/app/frontend/public/runtime-config.json";
+const keys = ["WIFI_SSID","WIFI_PASSWORD","WIFI_TYPE","WIFI_HIDDEN","PRINT_CONFIG","IS_LOGO_INVERTIBLE","QUICK_VOUCHER_CONFIG"];
 
 function parseValue(value) {
   if (!value) {
@@ -19,7 +19,7 @@ function parseValue(value) {
   const trimmed = value.trim();
 
   // Only attempt JSON parsing for object/array-looking values
-  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
     try {
       return JSON.parse(trimmed);
     } catch {
@@ -41,10 +41,10 @@ for (const k of keys) {
 fs.writeFileSync(
   outPath,
   JSON.stringify(cfg, null, 2),
-  'utf8'
+  "utf8"
 );
 
-console.log('WROTE', outPath, 'keys=', Object.keys(cfg));
+console.log("WROTE", outPath, "keys=", Object.keys(cfg));
 NODE
 
 # exec the original command

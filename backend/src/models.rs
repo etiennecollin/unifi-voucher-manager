@@ -147,6 +147,10 @@ impl SiteConfig {
         for site in &mut sites {
             site.name = site.name.trim().to_owned();
             site.id = site.id.trim().to_ascii_lowercase();
+
+            if site.name.is_empty() {
+                return Err("A site name shall not be empty".to_owned());
+            }
         }
 
         Ok(sites)
