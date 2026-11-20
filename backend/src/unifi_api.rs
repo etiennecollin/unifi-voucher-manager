@@ -62,20 +62,24 @@ impl<'a> UnifiAPI<'a> {
             environment,
         };
 
-        // If no sites were configured through the environment, manage all available sites.
+        // If no sites were registered through the environment, register all available sites.
         if unifi_api.sites.is_empty() {
-            info!("No sites configured, falling back to managing all available sites");
+            info!("No sites registered, falling back to managing all available sites");
             unifi_api
-                .update_available_sites()
+                .register_available_sites()
                 .await
-                .map_err(|e| format!("Failed to update available of sites: {e}",))?;
+                .map_err(|e| format!("Failed to register all available sites: {e}",))?;
             unifi_api.print_managed_sites();
 
             return Ok(unifi_api);
         }
 
-        // Resolve the default site ID if one was configured.
-        if unifi_api.sites.iter().any(|site| site.id == "default") {
+        // Resolve the default site ID if one was registered.
+        if unifi_api
+            .sites
+            .iter()
+            .any(|site| site.id == SiteConfig::UNIFI_DEFAULT_SITE_ID)
+        {
             info!("Fetching the default site ID from UniFi controller...");
 
             let default_id = unifi_api
@@ -88,7 +92,7 @@ impl<'a> UnifiAPI<'a> {
             for site in unifi_api
                 .sites
                 .iter_mut()
-                .filter(|site| site.id == "default")
+                .filter(|site| site.id == SiteConfig::UNIFI_DEFAULT_SITE_ID)
             {
                 site.id.clone_from(&default_id);
             }
@@ -100,7 +104,7 @@ impl<'a> UnifiAPI<'a> {
             .await
             .map_err(|e| format!("Failed to fetch available of sites: {e}",))?;
 
-        // Ensure all configured sites are available
+        // Ensure all registered sites are available
         for site in &unifi_api.sites {
             if !available_sites
                 .iter()
@@ -119,15 +123,20 @@ impl<'a> UnifiAPI<'a> {
     }
 
     fn get_voucher_api_url(&self, site_name: &str) -> String {
-        let site = self.sites
+        let site = self
+            .sites
             .iter()
             .find(|site| site.name.eq_ignore_ascii_case(site_name.trim()))
-            .unwrap_or_else(||{
-                error!("Failed to find site {site_name} in configured sites, falling back to default site");
-                error!("{:?}", self.sites);
-                self.sites.first().expect(
-                    "There should at least be the default site in the sites list at this point",
-                )
+            .unwrap_or_else(|| {
+                let fallback = self
+                    .sites
+                    .first()
+                    .expect("There should at least be one managed site at this point");
+                error!(
+                    "Failed to find site {} in managed sites, falling back to site {}",
+                    site_name, fallback.name
+                );
+                fallback
             });
         format!("{}/{}/hotspot/vouchers", self.sites_api_url, site.id)
     }
@@ -259,6 +268,10 @@ impl<'a> UnifiAPI<'a> {
                 None::<&()>,
             )
             .await?;
+
+        if result.data.is_empty() {
+            return Err(StatusCode::NO_CONTENT);
+        }
 
         Ok(result.data)
     }
@@ -419,7 +432,7 @@ impl<'a> UnifiAPI<'a> {
         Ok(result)
     }
 
-    pub async fn update_available_sites(&mut self) -> Result<(), StatusCode> {
+    pub async fn register_available_sites(&mut self) -> Result<(), StatusCode> {
         let available_sites = self.get_available_sites().await?;
 
         self.sites = available_sites

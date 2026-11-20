@@ -139,6 +139,8 @@ pub struct SiteConfig {
 }
 
 impl SiteConfig {
+    pub const UNIFI_DEFAULT_SITE_ID: &str = "default";
+
     pub fn try_parse(json: &str) -> Result<Vec<Self>, String> {
         let mut sites: Vec<Self> = serde_json::from_str(json).map_err(|e| e.to_string())?;
 
@@ -155,7 +157,7 @@ impl Default for SiteConfig {
     fn default() -> Self {
         Self {
             name: "Default".to_owned(),
-            id: "default".to_owned(),
+            id: Self::UNIFI_DEFAULT_SITE_ID.to_owned(),
         }
     }
 }

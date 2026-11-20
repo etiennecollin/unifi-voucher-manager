@@ -272,7 +272,6 @@ Make sure to configure the required variables. The optional variables generally 
   - Check if the UniFi controller is running and reachable (DNS issues?)
   - Ensure API key is valid
   - Ensure the site has the hotspot/guest portal enabled
-  - If `UNIFI_SITES` is configured, ensure it contains valid site IDs
 - **Application won't start**
   - Check all environment variables are set
   - Verify Docker container has network access to UniFi controller
