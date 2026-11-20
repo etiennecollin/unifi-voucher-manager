@@ -1,11 +1,11 @@
 use std::{env, sync::OnceLock};
 
+use crate::models::SiteConfig;
 use chrono_tz::Tz;
 use tracing::{error, info};
 
 const DEFAULT_BACKEND_BIND_HOST: &str = "127.0.0.1";
 const DEFAULT_BACKEND_BIND_PORT: u16 = 8080;
-const DEFAULT_UNIFI_SITE_ID: &str = "default";
 const DEEFAULT_ROLLING_VOUCHER_DURATION_MINUTES: u64 = 480;
 
 pub static ENVIRONMENT: OnceLock<Environment> = OnceLock::new();
@@ -13,7 +13,7 @@ pub static ENVIRONMENT: OnceLock<Environment> = OnceLock::new();
 #[derive(Debug, Clone)]
 pub struct Environment {
     pub unifi_controller_url: String,
-    pub unifi_site_id: String,
+    pub unifi_sites: Vec<SiteConfig>,
     pub unifi_api_key: String,
     pub backend_bind_host: String,
     pub backend_bind_port: u16,
@@ -39,8 +39,13 @@ impl Environment {
 
         let unifi_api_key: String =
             env::var("UNIFI_API_KEY").map_err(|e| format!("UNIFI_API_KEY: {e}"))?;
-        let unifi_site_id: String =
-            env::var("UNIFI_SITE_ID").unwrap_or(DEFAULT_UNIFI_SITE_ID.to_owned());
+
+        let unifi_sites: Vec<SiteConfig> = match env::var("UNIFI_SITES") {
+            Ok(val) => {
+                SiteConfig::try_parse(&val).map_err(|e| format!("Invalid UNIFI_SITES: {e}"))?
+            }
+            Err(_) => vec![],
+        };
 
         let backend_bind_host: String =
             env::var("BACKEND_BIND_HOST").unwrap_or(DEFAULT_BACKEND_BIND_HOST.to_owned());
@@ -90,7 +95,7 @@ impl Environment {
 
         Ok(Self {
             unifi_controller_url,
-            unifi_site_id,
+            unifi_sites,
             unifi_api_key,
             backend_bind_host,
             backend_bind_port,
@@ -102,7 +107,7 @@ impl Environment {
     }
 
     fn parse_bool(s: &str) -> Result<bool, String> {
-        match s.trim().to_lowercase().as_str() {
+        match s.trim().to_ascii_lowercase().as_str() {
             "true" | "1" | "yes" => Ok(true),
             "false" | "0" | "no" => Ok(false),
             _ => Err(format!("Boolean value must be true or false, found: {s}")),

@@ -1,9 +1,13 @@
+use axum::extract::Query;
 use chrono::Utc;
 use chrono_tz::Tz;
 use tokio::time::sleep;
 use tracing::{error, info};
 
-use crate::handlers::{delete_expired_handler, delete_expired_rolling_handler};
+use crate::{
+    handlers::{delete_expired_handler, delete_expired_rolling_handler, get_site_names_handler},
+    models::SiteNameRequest,
+};
 
 pub async fn run_daily_purge(timezone: Tz, purge_all: bool) {
     let voucher_desc = if purge_all {
@@ -40,15 +44,29 @@ pub async fn run_daily_purge(timezone: Tz, purge_all: bool) {
         sleep(duration).await;
 
         info!("Purging {}...", voucher_desc);
+        let site_names = get_site_names_handler().await;
 
-        let result = if purge_all {
-            delete_expired_handler().await
-        } else {
-            delete_expired_rolling_handler().await
-        };
-        match result {
-            Ok(response) => info!("Deleted {} {}", response.vouchers_deleted, voucher_desc),
-            Err(code) => error!("Failed to delete {}: {}", voucher_desc, code),
-        };
+        for site in &site_names.site_names {
+            let query = Query(SiteNameRequest {
+                site_name: site.to_owned(),
+            });
+
+            let result = if purge_all {
+                delete_expired_handler(query).await
+            } else {
+                delete_expired_rolling_handler(query).await
+            };
+
+            match result {
+                Ok(response) => info!(
+                    "Deleted {} {} from site {}",
+                    response.vouchers_deleted, voucher_desc, site
+                ),
+                Err(code) => error!(
+                    "Failed to delete {} from site {}: {}",
+                    voucher_desc, site, code
+                ),
+            }
+        }
     }
 }

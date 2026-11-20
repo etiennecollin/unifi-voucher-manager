@@ -6,15 +6,15 @@
 UVM is a modern, touch-friendly web application for managing WiFi vouchers on UniFi controllers.
 Perfect for businesses, cafes, hotels, and home networks that need to provide guest WiFi access.
 
-![WiFi Voucher Manager](./assets/view.png)
+![Unifi Voucher Manager](./assets/view.png)
 
 <!-- vim-markdown-toc GFM -->
 
 - [✨ Features](#-features)
-  - [🎫 Voucher Management & WiFi QR Code](#-voucher-management--wifi-qr-code)
+  - [Voucher Management & WiFi QR Code](#-voucher-management--wifi-qr-code)
   - [Kiosk Display](#kiosk-display)
-  - [🎨 Modern Interface](#-modern-interface)
-  - [🔧 Technical Features](#-technical-features)
+  - [Modern Interface](#-modern-interface)
+  - [Technical Features](#-technical-features)
 - [🚀 Quick Start](#-quick-start)
   - [Using Docker Compose (Recommended)](#using-docker-compose-recommended)
   - [Without Docker](#without-docker)
@@ -32,8 +32,12 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
 
 ## ✨ Features
 
-### 🎫 Voucher Management & WiFi QR Code
+### Voucher Management & WiFi QR Code
 
+- **Multiple Sites** - Manage multiple UniFi sites with the same UVM instance
+- **Browse Vouchers** - Browse and search existing vouchers by name
+- **Bulk Operations** - Select and delete multiple vouchers at once
+- **Print Vouchers** - Print vouchers in either list or grid format; thermal printers friendly
 - **Quick Create** - Generate guest vouchers with preset durations (1 hour to 1 week)
 - **Custom Create** - Full control over voucher parameters:
   - Custom name
@@ -41,12 +45,14 @@ Perfect for businesses, cafes, hotels, and home networks that need to provide gu
   - Guest count limits
   - Data usage limits
   - Upload/download speed limits
-- **Browse Vouchers** - Browse and search existing vouchers by name
-- **Bulk Operations** - Select and delete multiple vouchers at once
-- **Print Vouchers** - Print vouchers in either list or grid format; thermal printers friendly
 - **Auto-cleanup** - Remove expired vouchers with a single click
 - **QR Code** - Easily connect guests to your network
 - **Rolling Vouchers** - Automatically generate a voucher for the next guest when the current one gets used
+
+|                                          |                                            |
+| ---------------------------------------- | ------------------------------------------ |
+| ![Detailed view](./assets/details.png)   | ![Printing](./assets/print.png)            |
+| ![Quick create view](./assets/quick.png) | ![Custom create view](./assets/custom.png) |
 
 ### Kiosk Display
 
@@ -56,7 +62,9 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 - **Current Voucher**: The active rolling voucher code
 - **Real-time Updates**: Automatically refreshes when the rolling voucher changes
 
-### 🎨 Modern Interface
+![Kiosk view](./assets/kiosk.png)
+
+### Modern Interface
 
 - **Touch-Friendly** – Optimized for tablet, mobile, and desktop
 - **Dark/Light Mode** – Follows system preference, with manual override
@@ -65,7 +73,7 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 - **Real-time Notifications** - Instant feedback for all operations
 - **Custom SVG Logo** - Display your own logo on the main page
 
-### 🔧 Technical Features
+### Technical Features
 
 - **Docker Ready** - Easy deployment with Docker Compose and included healthcheck
 - **UniFi Integration** - Direct API connection to UniFi controllers
@@ -91,10 +99,10 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 
 ### Without Docker
 
-1. **Install the dependencies**
-   - `rust >= 1.88.0`
-   - `nodejs >= 24.3.0`
-   - `npm >= 11.4.2`
+1. **Install the dependencies** (older versions may work, but are not tested)
+   - `rust >= 1.98.0`
+   - `nodejs >= 26.13.0`
+   - `npm >= 12.2.2`
 2. **Clone the repository**
    ```bash
    git clone https://github.com/etiennecollin/unifi-voucher-manager
@@ -119,7 +127,7 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
    ```
 
 5. **Access the interface**
-   - Open your browser to `http://localhost:3000`.
+   - Open your browser to `http://localhost:3000` or `http://127.0.0.1:3000`.
 
 ## ⚙️ Configuration
 
@@ -128,7 +136,6 @@ The kiosk page (`/kiosk`) provides a guest-friendly interface displaying:
 1. **Access your UniFi Controller**
 2. **Navigate to Settings -> Control Plane -> Integration**
 3. **Create a new API key** by giving it a name and an expiration.
-4. **Find your Site ID** in the controller URL or on [unifi.ui.com](https://unifi.ui.com)
 
 ### Rolling Vouchers and Kiosk Page
 
@@ -186,15 +193,27 @@ Make sure to configure the required variables. The optional variables generally 
   - **Description**: API Key for your UniFi controller.
   - **Example**: `abc123...`
 
+> [!NOTE]
+> A site ID should have this format `XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX`.
+>
+> If you are unable to find your site ID, you may run the following command to get it through the UniFi network API:
+>
+> ```sh
+> curl -k -X GET 'https://<your-unifi-controller-address>/proxy/network/integrations/v1/sites' -H 'X-API-KEY: <your-api-key>' -H 'Accept: application/json'
+> ```
+>
+> Make sure to substitute the right address and API key.
+
 > [!WARNING]
 > Improperly setting the `UNIFI_HAS_VALID_CERT` variable **will** prevent UVM from communicating with the UniFi controller.
 
 - **`UNIFI_HAS_VALID_CERT`: `bool`** (_Optional_)
   - **Description**: Whether your UniFi controller uses a valid SSL certificate. This should normally be set to `true`, especially if you access the controller through a reverse proxy or another setup that provides trusted certificates (e.g., Let's Encrypt). **If you connect directly to the controller’s IP address (which usually serves a self-signed certificate), you may need to set this to `false`.**
   - **Example**: `true` (default)
-- **`UNIFI_SITE_ID`: `string`** (_Optional_)
-  - **Description**: Site ID of your UniFi controller. Using the value `default`, the backend will try to fetch the ID of the default site.
-  - **Example**: `default` (default)
+- **`UNIFI_SITES`: `JSON object`** (_Optional_)
+  - **Description**: A list of UniFi sites to manage. If omitted, all available sites are managed. Set a site's `id` to `default` to use the default site configured in your UniFi controller.
+  - **Example**: `[{"name":"Default","id":"default"}]` (default)
+  - **Example**: `[{"name":"Site 1","id":"site-1-id"},{"name":"Site 2","id":"site-2-id"}]`
 
 > [!CAUTION]
 > To restrict UVM access to the guest subnetwork users while still allowing access to `/welcome` page, set the `GUEST_SUBNETWORK` variable. This makes sure guests do not have access to other UVM pages, such as the voucher management interface (the root `/` page).
@@ -256,7 +275,6 @@ Make sure to configure the required variables. The optional variables generally 
 
 - **Vouchers not appearing or connection issue to UniFi controller**
   - Verify `UNIFI_CONTROLLER_URL` is correct and accessible
-  - Verify `UNIFI_SITE_ID` matches your controller's site
   - Verify `UNIFI_HAS_VALID_CERT` is correct (depending on whether your `UNIFI_CONTROLLER_URL` has a valid SSL certificate or not)
   - Check if the UniFi controller is running and reachable (DNS issues?)
   - Ensure API key is valid

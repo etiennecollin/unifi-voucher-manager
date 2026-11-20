@@ -79,6 +79,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/api/health", get(health_check_handler))
+        .route("/api/sites", get(get_site_names_handler))
         .route("/api/vouchers", get(get_all_vouchers_handler))
         .route("/api/vouchers", post(create_voucher_handler))
         .route("/api/vouchers/details", get(get_voucher_details_handler))

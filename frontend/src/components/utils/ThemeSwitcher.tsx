@@ -10,6 +10,7 @@ export default function ThemeSwitcher() {
       value={theme}
       onChange={(e) => setTheme(e.target.value as Theme)}
       className="text-sm"
+      aria-label="Select theme"
     >
       <option value="system">⚙️ System</option>
       <option value="light">🌞 Light</option>

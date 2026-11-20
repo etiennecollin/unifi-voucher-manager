@@ -1,10 +1,10 @@
+import { Voucher } from "@/types/voucher";
 import { copyText } from "@/utils/clipboard";
 import { formatCode } from "@/utils/format";
 import { notify } from "@/utils/notifications";
-import { useState } from "react";
-import { Voucher } from "@/types/voucher";
-import { useRouter } from "next/navigation";
 import { storePrintJob } from "@/utils/print";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 type Props = {
   voucher: Voucher;
