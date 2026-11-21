@@ -188,9 +188,12 @@ Make sure to configure the required variables. The optional variables generally 
 
 - **`UNIFI_CONTROLLER_URL`: `string`** (_Required_)
   - **Description**: URL to your UniFi controller with protocol (`http://` or `https://`).
-  - **Example**: `https://unifi.example.com` or `https://192.168.8.1:443`
+  - **Example (Local)**: `https://unifi.example.com` or `https://192.168.8.1:443`
+  - **Example (Remote)**: `https://api.ui.com/v1/connector/consoles/{consoleId}`, where `{consoleId}` can be found in the URL on [unifi.ui.com](https://unifi.ui.com) after selecting your console.
 - **`UNIFI_API_KEY`: `string`** (_Required_)
-  - **Description**: API Key for your UniFi controller.
+  - **Description**: API key used to authenticate with your UniFi controller.
+    - **Local connection**: Create the API key from the Integrations tab in your local console's Network application.
+    - **Remote connection (via `api.ui.com`)**: Create the API key through the [UniFi Site Manager](https://unifi.ui.com/settings/api-keys). Ensure the key has access to the Network application and all specific sites you intend to manage.
   - **Example**: `abc123...`
 
 > [!NOTE]
