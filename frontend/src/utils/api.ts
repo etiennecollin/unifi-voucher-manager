@@ -25,11 +25,8 @@ async function call<T>(
   const url = new URL(`/rust-api${path}`, window.location.origin);
 
   if (includeSite) {
-    const site = localStorage.getItem("site");
-
-    if (site) {
-      url.searchParams.set("siteName", site);
-    }
+    const site = localStorage.getItem("site") || "unknown";
+    url.searchParams.set("siteName", site);
   }
 
   const headers = new Headers(opts.headers);
