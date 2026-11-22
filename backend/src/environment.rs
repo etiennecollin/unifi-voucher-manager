@@ -6,7 +6,7 @@ use tracing::{error, info};
 
 const DEFAULT_BACKEND_BIND_HOST: &str = "127.0.0.1";
 const DEFAULT_BACKEND_BIND_PORT: u16 = 8080;
-const DEEFAULT_ROLLING_VOUCHER_DURATION_MINUTES: u64 = 480;
+const DEFAULT_ROLLING_VOUCHER_DURATION_MINUTES: u64 = 480;
 
 pub static ENVIRONMENT: OnceLock<Environment> = OnceLock::new();
 
@@ -70,7 +70,7 @@ impl Environment {
                 .trim()
                 .parse()
                 .map_err(|e| format!("Invalid ROLLING_VOUCHER_DURATION_MINUTES: {e}"))?,
-            Err(_) => DEEFAULT_ROLLING_VOUCHER_DURATION_MINUTES,
+            Err(_) => DEFAULT_ROLLING_VOUCHER_DURATION_MINUTES,
         };
 
         let purge_all_expired_vouchers: bool = match env::var("PURGE_ALL_EXPIRED_VOUCHERS") {
