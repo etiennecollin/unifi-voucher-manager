@@ -7,12 +7,13 @@ import { PrintMode } from "@/types/print";
 import { Voucher } from "@/types/voucher";
 import { api } from "@/utils/api";
 import { notify } from "@/utils/notifications";
+import { TriState } from "@/types/state";
 import { storePrintJob } from "@/utils/print";
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function VouchersTab() {
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<TriState | null>(null);
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [viewVoucher, setViewVoucher] = useState<Voucher | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,14 +42,15 @@ export default function VouchersTab() {
   );
 
   const load = useCallback(async () => {
-    setLoading(true);
+    setState("loading");
     try {
       const res = await api.getAllVouchers();
       setVouchers(res.data || []);
+      setState("ok");
     } catch {
       notify("Failed to load vouchers", "error");
+      setState("error");
     }
-    setLoading(false);
   }, []);
 
   const startEdit = useCallback(() => {
@@ -222,8 +224,12 @@ export default function VouchersTab() {
         </div>
       )}
 
-      {loading ? (
+      {state === "loading" ? (
         <Spinner />
+      ) : state === "error" ? (
+        <div className="text-center py-8 text-status-danger">
+          {"Failed to load vouchers"}
+        </div>
       ) : !filteredVouchers.length ? (
         <div className="text-center py-8 text-secondary">
           {searchQuery
