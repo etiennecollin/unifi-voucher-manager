@@ -12,20 +12,24 @@ import { useGlobal } from "@/contexts/GlobalContext";
 
 export default function KioskPage() {
   const [voucher, setVoucher] = useState<Voucher | null>(null);
-  const [state, setState] = useState<TriState | null>(null);
-  const { wifiConfig, wifiString } = useGlobal();
+  const [state, setState] = useState<TriState>("loading");
+  const { sitesLoaded, wifiConfig, wifiString } = useGlobal();
 
   const load = useCallback(async () => {
-    if (state === "loading") return;
+    setState("loading");
     try {
-      setState("loading");
       await api.getRollingVoucher().then(setVoucher);
       setState("ok");
     } catch (error: any) {
+      // If rolling voucher wasn't found, it might just need to be created
+      //
+      // Other errors are not expected
       if (error?.status !== 404) {
         setState("error");
         return;
       }
+
+      // Try creating the rolling voucher
       try {
         await api.createRollingVoucher().then(setVoucher);
         setState("ok");
@@ -36,14 +40,18 @@ export default function KioskPage() {
   }, []);
 
   useEffect(() => {
+    if (!sitesLoaded) {
+      setState("loading");
+      return;
+    }
+
     load();
     window.addEventListener("vouchersUpdated", load);
     return () => window.removeEventListener("vouchersUpdated", load);
-  }, [load]);
+  }, [load, sitesLoaded]);
 
   const renderContent = useCallback(() => {
     switch (state) {
-      case null:
       case "loading":
         return <Spinner />;
       case "error":
