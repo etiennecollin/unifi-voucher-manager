@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 
 export default function VouchersTab() {
   const { sitesLoaded } = useGlobal();
-  const [state, setState] = useState<TriState | null>(null);
+  const [state, setState] = useState<TriState>("loading");
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [viewVoucher, setViewVoucher] = useState<Voucher | null>(null);
   const [searchQuery, setSearchQuery] = useState("");

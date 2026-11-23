@@ -145,7 +145,7 @@ function VoucherPrintCard({ voucher }: { voucher: Voucher }) {
 function Vouchers() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [state, setState] = useState<TriState | null>("loading");
+  const [state, setState] = useState<TriState>("loading");
 
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [mode, setMode] = useState<PrintMode>("list");
@@ -209,8 +209,6 @@ function Vouchers() {
       case "ok":
         return "No vouchers to print, press escape or backspace.";
       case "error":
-        return "An error occurred, press escape or backspace.";
-      default:
         return "An error occurred, press escape or backspace.";
     }
   })();

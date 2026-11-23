@@ -22,7 +22,7 @@ type Props = {
 
 export default function VoucherModal({ voucher, onClose }: Props) {
   const [details, setDetails] = useState<Voucher | null>(null);
-  const [state, setState] = useState<TriState | null>(null);
+  const [state, setState] = useState<TriState>("loading");
   const lastFetchedId = useRef<string | null>(null);
 
   useEffect(() => {
@@ -47,7 +47,6 @@ export default function VoucherModal({ voucher, onClose }: Props) {
 
   const renderContent = useCallback(() => {
     switch (state) {
-      case null:
       case "loading":
         return <Spinner />;
       case "error":

@@ -12,7 +12,7 @@ import { useGlobal } from "@/contexts/GlobalContext";
 
 export default function KioskPage() {
   const [voucher, setVoucher] = useState<Voucher | null>(null);
-  const [state, setState] = useState<TriState | null>(null);
+  const [state, setState] = useState<TriState>("loading");
   const { sitesLoaded, wifiConfig, wifiString } = useGlobal();
 
   const load = useCallback(async () => {
@@ -52,7 +52,6 @@ export default function KioskPage() {
 
   const renderContent = useCallback(() => {
     switch (state) {
-      case null:
       case "loading":
         return <Spinner />;
       case "error":
